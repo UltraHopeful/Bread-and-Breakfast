@@ -11,7 +11,7 @@ import {
   Paper,
   Link,
 } from "@mui/material";
-
+import { UserPool } from "../../configs";
 const Signup = () => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
@@ -20,6 +20,23 @@ const Signup = () => {
     event.preventDefault();
 
     const formdata = new FormData(event.currentTarget);
+    const name = formdata.get("name");
+    const email = formdata.get("email");
+    const password = formdata.get("password");
+    const userAttributes = [
+      {
+        Name: "name",
+        Value: name,
+      },
+    ];
+
+    UserPool.signUp(email, password, userAttributes, null, (err, data) => {
+      if (err) {
+        console.log({ err });
+      } else {
+        console.log({ data });
+      }
+    });
   };
 
   const login = () => {
@@ -40,12 +57,7 @@ const Signup = () => {
           <Typography component="h1" variant="h5">
             {"Sign up"}
           </Typography>
-          <Box
-            component="form"
-            noValidate
-            onSubmit={handleSubmit}
-            sx={{ mt: 2 }}
-          >
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
