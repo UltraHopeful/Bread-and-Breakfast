@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import LockRoundedIcon from "@mui/icons-material/LockRounded";
 import { useNavigate } from "react-router-dom";
 import {
@@ -12,9 +12,23 @@ import {
   Link,
 } from "@mui/material";
 import { UserPool } from "../../configs";
+import axios from "axios";
+import constants from "../../constants";
+
 const Signup = () => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    axios
+      .get(constants.storeSignupDetails)
+      .then((res) => {
+        console.log({ res });
+      })
+      .catch((err) => {
+        console.log({ err });
+      });
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
