@@ -3,7 +3,7 @@ import { Box, Button, Grid, InputBase, Typography } from "@mui/material";
 import { firestore } from "../../configs";
 import axios from "axios";
 import constants from "../../constants";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, setDoc } from "firebase/firestore";
 import { grey } from "@mui/material/colors";
 
 const getSecurityQuestions = async () => {
@@ -20,7 +20,7 @@ const getSecurityQuestions = async () => {
   return questions;
 };
 
-const SecurityQuestions = ({ handleNext }) => {
+const SecurityQuestions = ({ handleNext, userId }) => {
   const [errors, setErrors] = useState({});
   const [questions, setQuestions] = useState([]);
 
@@ -30,16 +30,22 @@ const SecurityQuestions = ({ handleNext }) => {
       const qs = questions.sort(() => 0.5 - Math.random());
       const randomQuestions = qs.slice(0, 2);
 
+      // const data = [
+      //   { question: randomQuestions[0], answer: "" },
+      //   { question: randomQuestions[1], answer: "" },
+      // ];
+
       setQuestions(randomQuestions);
     })();
   }, []);
 
-  //calling cloud function to store security ans
-  const storeSecurityAns = async () => {
+  //storing security question and answers in firestore
+  const storeSecurityAns = async (data) => {
     try {
-      await axios.get(constants.storeSignupDetails);
-    } catch (error) {
-      console.log({ error });
+      await setDoc(doc(firestore, "security_questions_ans", userId), data);
+      console.log("Document created");
+    } catch (e) {
+      console.error("Error adding document: ", e);
     }
   };
 
@@ -53,6 +59,7 @@ const SecurityQuestions = ({ handleNext }) => {
     let errors = {};
     let data = {};
     let isFormValid = true;
+    let index = 0;
 
     formdata.forEach((formValue, key) => {
       const value = formValue.toString().trim();
@@ -61,14 +68,20 @@ const SecurityQuestions = ({ handleNext }) => {
         isFormValid = false;
         errors[key] = "This field is required";
       } else {
-        data[key] = value;
+        data[`question${index + 1}`] = {
+          question: questions[index],
+          answer: value,
+        };
       }
+      index++;
     });
 
     if (!isFormValid) {
       setErrors(errors);
       return;
     }
+
+    storeSecurityAns(data);
   };
 
   const renderQuestions = useCallback(
@@ -124,3 +137,14 @@ const styles = {
     color: "red",
   },
 };
+
+// {
+//   question1:{
+//     question:"How are you?",
+//     answer:"Fine"
+//   },
+//   question2:{
+//     question:"How are you 2?",
+//     answer:"Fine 2"
+//   }
+// }

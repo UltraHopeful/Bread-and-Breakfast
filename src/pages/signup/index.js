@@ -22,13 +22,14 @@ import { collection, getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 const steps = ["User Details", "Security Questions", "Secret Code"];
+let userId = "";
 
 function getStepContent(step, handleNext) {
   switch (step) {
     case 0:
       return <SignupDetails handleNext={handleNext} />;
     case 1:
-      return <SecurityQuestions handleNext={handleNext} />;
+      return <SecurityQuestions handleNext={handleNext} userId={userId} />;
     case 2:
       return <CipherCode handleNext={handleNext} />;
     default:
@@ -50,13 +51,15 @@ const getSecurityQuestions = async () => {
   return questions;
 };
 
-export default function Checkout() {
-  const [activeStep, setActiveStep] = useState(1);
+export default function SignupSteps() {
+  const [activeStep, setActiveStep] = useState(0);
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
 
   const handleNext = (data) => {
-    console.log({ data });
+    if (data.userSub) {
+      userId = data.userSub;
+    }
     setActiveStep(activeStep + 1);
   };
 
