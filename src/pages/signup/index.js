@@ -1,23 +1,14 @@
-import React, { useState, useEffect } from "react";
-import CssBaseline from "@mui/material/CssBaseline";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
+import React, { useState } from "react";
 import Container from "@mui/material/Container";
-import Toolbar from "@mui/material/Toolbar";
 import Paper from "@mui/material/Paper";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import Button from "@mui/material/Button";
-import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import SignupDetails from "./signup-details";
 import SecurityQuestions from "./security-questions";
 import CipherCode from "./cipher-code";
-import { firestore, UserPool } from "../../configs";
-import axios from "axios";
-import constants from "../../constants";
+import { firestore } from "../../configs";
 import { collection, getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
@@ -52,7 +43,7 @@ const getSecurityQuestions = async () => {
 };
 
 export default function SignupSteps() {
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(2);
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
 

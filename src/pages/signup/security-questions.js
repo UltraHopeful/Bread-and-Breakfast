@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Box, Button, Grid, InputBase, Typography } from "@mui/material";
 import { firestore } from "../../configs";
-import axios from "axios";
-import constants from "../../constants";
 import { collection, getDocs, doc, setDoc } from "firebase/firestore";
 import { grey } from "@mui/material/colors";
 
@@ -29,11 +27,6 @@ const SecurityQuestions = ({ handleNext, userId }) => {
       const questions = await getSecurityQuestions();
       const qs = questions.sort(() => 0.5 - Math.random());
       const randomQuestions = qs.slice(0, 2);
-
-      // const data = [
-      //   { question: randomQuestions[0], answer: "" },
-      //   { question: randomQuestions[1], answer: "" },
-      // ];
 
       setQuestions(randomQuestions);
     })();
@@ -137,14 +130,3 @@ const styles = {
     color: "red",
   },
 };
-
-// {
-//   question1:{
-//     question:"How are you?",
-//     answer:"Fine"
-//   },
-//   question2:{
-//     question:"How are you 2?",
-//     answer:"Fine 2"
-//   }
-// }
