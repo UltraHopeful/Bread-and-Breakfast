@@ -1,150 +1,83 @@
 import React, { useState, useEffect } from "react";
-import LockRoundedIcon from "@mui/icons-material/LockRounded";
-import { useNavigate } from "react-router-dom";
-import {
-  Container,
-  Typography,
-  Box,
-  Grid,
-  TextField,
-  Button,
-  Paper,
-  Link,
-} from "@mui/material";
-import { UserPool } from "../../configs";
+import CssBaseline from "@mui/material/CssBaseline";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Toolbar from "@mui/material/Toolbar";
+import Paper from "@mui/material/Paper";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import Button from "@mui/material/Button";
+import Link from "@mui/material/Link";
+import Typography from "@mui/material/Typography";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import SignupDetails from "./signup-details";
+import SecurityQuestions from "./security-questions";
+import CipherCode from "./cipher-code";
+import { firestore, UserPool } from "../../configs";
 import axios from "axios";
 import constants from "../../constants";
+import { collection, getDocs } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
-const Signup = () => {
+const steps = ["User Details", "Security Questions", "Secret Code"];
+
+function getStepContent(step, handleNext) {
+  switch (step) {
+    case 0:
+      return <SignupDetails handleNext={handleNext} />;
+    case 1:
+      return <SecurityQuestions handleNext={handleNext} />;
+    case 2:
+      return <CipherCode handleNext={handleNext} />;
+    default:
+      throw new Error("Unknown step");
+  }
+}
+
+const getSecurityQuestions = async () => {
+  const questions = [];
+
+  const querySnapshot = await getDocs(
+    collection(firestore, "security_questions")
+  );
+
+  querySnapshot.forEach((doc) => {
+    questions.push(...doc.data().questions);
+  });
+
+  return questions;
+};
+
+export default function Checkout() {
+  const [activeStep, setActiveStep] = useState(1);
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    axios
-      .get(constants.storeSignupDetails)
-      .then((res) => {
-        console.log({ res });
-      })
-      .catch((err) => {
-        console.log({ err });
-      });
-  }, []);
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    const formdata = new FormData(event.currentTarget);
-    const name = formdata.get("name");
-    const email = formdata.get("email");
-    const password = formdata.get("password");
-    const userAttributes = [
-      {
-        Name: "name",
-        Value: name,
-      },
-    ];
-
-    UserPool.signUp(email, password, userAttributes, null, (err, data) => {
-      if (err) {
-        console.log({ err });
-      } else {
-        console.log({ data });
-      }
-    });
-  };
-
-  const login = () => {
-    navigate("/login");
+  const handleNext = (data) => {
+    console.log({ data });
+    setActiveStep(activeStep + 1);
   };
 
   return (
-    <Container maxWidth="sm">
-      <Paper sx={{ p: 8, my: 8 }}>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <LockRoundedIcon />
-          <Typography component="h1" variant="h5">
-            {"Sign up"}
-          </Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  autoComplete="given-name"
-                  name="name"
-                  required
-                  fullWidth
-                  id="name"
-                  label="Full Name"
-                  error={!!errors.name}
-                  helperText={errors.name}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  error={!!errors.email}
-                  helperText={errors.email}
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
-                  error={!!errors.password}
-                  helperText={errors.password}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="cpassword"
-                  label="Confirm Password"
-                  type="password"
-                  id="cpassword"
-                  autoComplete="new-password"
-                  error={!!errors.cpassword}
-                  helperText={errors.cpassword}
-                />
-              </Grid>
-            </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign up
-            </Button>
-          </Box>
-          <Grid container sx={{ justifyContent: "flex-end" }}>
-            <Grid item>
-              <Link onClick={login} variant="body2">
-                {"Already have an account? Login"}
-              </Link>
-            </Grid>
-          </Grid>
-        </Box>
+    <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
+      <Paper
+        variant="outlined"
+        sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
+      >
+        <Typography component="h1" variant="h4" align="center">
+          Sign up
+        </Typography>
+        <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        {getStepContent(activeStep, handleNext)}
       </Paper>
     </Container>
   );
-};
-
-export default Signup;
+}

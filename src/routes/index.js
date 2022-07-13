@@ -1,13 +1,13 @@
 import { Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { Navbar } from "../components";
-import { Home, Login, Signup } from "../pages";
+import { Home, Login, SignupSteps } from "../pages";
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<WithoutNavbar />}>
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/signup" element={<SignupSteps />} />
       </Route>
       <Route
         path="*"
