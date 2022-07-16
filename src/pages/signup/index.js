@@ -8,6 +8,7 @@ import {
   Button,
   Link,
   Divider,
+  Typography,
 } from "@mui/material";
 import { formValidationMsgs, formValidator } from "../../utils";
 import { useNavigate } from "react-router-dom";
@@ -112,7 +113,10 @@ const Signup = () => {
 
   return (
     <Container component="main" maxWidth="sm" sx={{ my: 4 }}>
-      <Paper variant="outlined" sx={{ p: 4 }}>
+      <Typography variant="h4" sx={{ textAlign: "center" }}>
+        Sign up
+      </Typography>
+      <Paper variant="outlined" sx={{ mt: 2, p: 4 }}>
         <Box>
           <Box
             component="form"
@@ -126,7 +130,7 @@ const Signup = () => {
                 <TextField
                   autoComplete="given-name"
                   name="fname"
-                  defaultValue="Naveed"
+                  defaultValue="John"
                   required
                   fullWidth
                   id="fname"
@@ -139,7 +143,7 @@ const Signup = () => {
                 <TextField
                   autoComplete="family-name"
                   name="lname"
-                  defaultValue="Khowaja"
+                  defaultValue="Doe"
                   required
                   fullWidth
                   id="lname"
@@ -152,7 +156,7 @@ const Signup = () => {
                 <TextField
                   required
                   fullWidth
-                  defaultValue="a@yopmail.com"
+                  defaultValue="jd@yopmail.com"
                   id="email"
                   label="Email Address"
                   name="email"
@@ -197,7 +201,7 @@ const Signup = () => {
               <Grid item xs={12}>
                 <TextField
                   name="q1"
-                  defaultValue="Naveed"
+                  defaultValue="John"
                   required
                   fullWidth
                   id="q1"
@@ -209,7 +213,7 @@ const Signup = () => {
               <Grid item xs={12}>
                 <TextField
                   name="q2"
-                  defaultValue="Khowaja"
+                  defaultValue="Doe"
                   required
                   fullWidth
                   id="q2"
@@ -221,7 +225,7 @@ const Signup = () => {
               <Grid item xs={12}>
                 <TextField
                   name="q3"
-                  defaultValue="Khowaja"
+                  defaultValue="Doe"
                   required
                   fullWidth
                   id="q3"
