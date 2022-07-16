@@ -1,6 +1,6 @@
-const BASE_URL_CLOUD =
-  "https://us-east1-csci5410-serverless-356113.cloudfunctions.net/";
+const BASE_URL_API_GATEWAY =
+  "https://pfqnboa6zi.execute-api.us-east-1.amazonaws.com/dev/api/";
 
 export default {
-  storeSignupDetails: `${BASE_URL_CLOUD}storeSignupDetails`,
+  authenticationDetails: `${BASE_URL_API_GATEWAY}user/authentication_details`,
 };
