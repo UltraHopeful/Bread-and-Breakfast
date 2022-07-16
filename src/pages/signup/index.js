@@ -9,6 +9,10 @@ import {
   Link,
   Divider,
   Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from "@mui/material";
 import { formValidationMsgs, formValidator } from "../../utils";
 import { useNavigate } from "react-router-dom";
@@ -21,6 +25,7 @@ let userData = null;
 
 const Signup = () => {
   const [errors, setErrors] = useState({});
+  const [showDialog, setShowDialog] = useState(false);
 
   const navigate = useNavigate();
 
@@ -30,6 +35,7 @@ const Signup = () => {
 
   const handleSignup = (event) => {
     event.preventDefault();
+
     setErrors({});
 
     const formdata = new FormData(event.currentTarget);
@@ -66,6 +72,10 @@ const Signup = () => {
     createUser();
   };
 
+  const handleDialog = () => {
+    setShowDialog(false);
+    login();
+  };
   const createUser = async () => {
     const userAttributes = [
       {
@@ -106,6 +116,7 @@ const Signup = () => {
     try {
       const res = await axios.post(constants.authenticationDetails, data);
       console.log({ res });
+      setShowDialog(true);
     } catch (e) {
       alert(e.message);
     }
@@ -114,7 +125,7 @@ const Signup = () => {
   return (
     <Container component="main" maxWidth="sm" sx={{ my: 4 }}>
       <Typography variant="h4" sx={{ textAlign: "center" }}>
-        Sign up
+        Signup
       </Typography>
       <Paper variant="outlined" sx={{ mt: 2, p: 4 }}>
         <Box>
@@ -175,7 +186,6 @@ const Signup = () => {
                   label="Password"
                   type="password"
                   id="password"
-                  autoComplete="new-password"
                   error={!!errors.password}
                   helperText={errors.password}
                 />
@@ -189,7 +199,6 @@ const Signup = () => {
                   label="Confirm Password"
                   type="password"
                   id="cpassword"
-                  autoComplete="new-password"
                   error={!!errors.cpassword}
                   helperText={errors.cpassword}
                 />
@@ -269,6 +278,15 @@ const Signup = () => {
           </Grid>
         </Box>
       </Paper>
+      <Dialog open={showDialog}>
+        <DialogTitle>Signup Successful</DialogTitle>
+        <DialogContent>
+          <Typography>Please check your email and verify</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialog}>Ok</Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
