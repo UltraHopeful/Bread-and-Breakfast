@@ -1,7 +1,7 @@
 import Login from './login';
-import Signup from './signup';
+import SignupSteps from './signup';
 import Home from './home';
 import HotelBooking from './hotel';
 import RoomList from './rooms';
 
-export { Login, Signup, Home, HotelBooking, RoomList };
+export { Login, SignupSteps, Home, HotelBooking, RoomList };
