@@ -1,6 +1,8 @@
+import React, { Component }  from 'react';
 import { Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import { Navbar } from '../components';
-import { Home, Login, SignupSteps, HotelBooking, RoomList } from '../pages';
+import { Home, Login, SignupSteps, HotelBooking, RoomList, QuestionVerification, CipherVerification } from '../pages';
+
 
 const AppRoutes = () => {
   return (
@@ -10,6 +12,8 @@ const AppRoutes = () => {
         <Route path="/signup" element={<SignupSteps />} />
         <Route path="/hotel" element={<HotelBooking />} />
         <Route path="/rooms" element={<RoomList />} />
+        <Route path="/questionverification" element={<QuestionVerification />} />
+        <Route path="/cipherVerification" element={<CipherVerification />} />
       </Route>
       <Route
         path="*"
