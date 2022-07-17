@@ -1,6 +1,6 @@
-import { Routes, Route, Outlet, Navigate } from "react-router-dom";
-import { Navbar } from "../components";
-import { Home, Login, Signup } from "../pages";
+import { Routes, Route, Outlet, Navigate } from 'react-router-dom';
+import { Navbar } from '../components';
+import { Home, Login, Signup, HotelBooking, RoomList } from '../pages';
 
 const AppRoutes = () => {
   return (
@@ -8,6 +8,8 @@ const AppRoutes = () => {
       <Route element={<WithoutNavbar />}>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/hotel" element={<HotelBooking />} />
+        <Route path="/rooms" element={<RoomList />} />
       </Route>
       <Route
         path="*"
