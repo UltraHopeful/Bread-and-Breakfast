@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Paper,
@@ -11,10 +11,27 @@ import {
 import { securityQuestions } from "../../data";
 import { loginValidationMsgs } from "../../utils/loginValidation";
 import { loginValidator } from "../../utils/loginValidation";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import constants from "../../constants";
+
+let userInput = null;
 
 const QuestionVerification = () => {
+
+    const params = useParams();
+    const navigate = useNavigate();
     const [errors, setErrors] = useState({});
-    
+    const [usrData, setUsrData] = useState();
+
+    useEffect(() =>{
+        const respObj = axios.get("https://yk3ixto4cgv7xpjtucnqsf3ijm0nlcnr.lambda-url.us-east-1.on.aws/").then((resp) => 
+        {
+            const uu = resp.data.Items.find(it => it.user_id.S == params.Username)
+            setUsrData(uu)
+        }
+        )}, [])
+
     const handleQuestions = (event) => {
         event.preventDefault();
         setErrors({});
@@ -40,9 +57,20 @@ const QuestionVerification = () => {
       setErrors(errors);
       return;
     }
-    //userData = data;
-    //validateUser();
+    userInput = data;
+    verifyAnswers()
   };
+  
+  const verifyAnswers = () => {
+        console.log("Going to verify answers")
+        if(userInput.q1 == usrData.answer_1.S && userInput.q2 == usrData.answer_2.S && userInput.q3 == usrData.answer_3.S){
+            navigate("/cipherVerification/"+usrData.user_id.S);
+        }
+        else{
+            alert("Please enter correct answers to proceed further.")
+        }
+    };
+  
     return (
         <Container component="main" maxWidth="sm" sx={{ my: 4 }}>
         <Typography variant="h4" sx={{ textAlign: "center" }}>

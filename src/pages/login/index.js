@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import LockRoundedIcon from "@mui/icons-material/LockRounded";
 import { useNavigate } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -14,9 +15,14 @@ import {
 import { loginValidator } from "../../utils/loginValidation";
 import { loginValidationMsgs } from "../../utils/loginValidation";
 import { UserPool } from "../../configs";
+import { AuthenticationDetails, CognitoUser, UserAgent } from "amazon-cognito-identity-js";
+import axios from "axios";
+import constants from "../../constants";
+import QuestionVerification from "./authenticatequestions";
 let userData = null;
 const Login = () => {
   const navigate = useNavigate();
+  const params = useParams();
   const [errors, setErrors] = useState({});
 
   const handleSubmit = (event) => {
@@ -50,19 +56,34 @@ const Login = () => {
   };
 
   const validateUser = async () => {
-
-    UserPool.authenticateUser(
-      userData,
-      (err, data) => {
+    var authenticationData = {
+      Username: userData.email,
+      Password: userData.pass,
+    };
+    var authenticationDetails = new AuthenticationDetails(authenticationData);
+    userData = {
+      "Username": userData.email,
+      "Pool": UserPool,
+    };
+    var cognitoUser = new CognitoUser(userData);
+    cognitoUser.authenticateUser(authenticationDetails, {
+      onSuccess: function (result) {
+        console.log({ result });
+        cognitoUser.getUserData(function (err, data) {
         if (err) {
-          alert(err.message);
-        } else {
-          console.log({ user: data });
-          // addAuthenticationDetails(data.userSub);
+          alert(err.message || JSON.stringify(err));
+          return;
         }
-      }
-    );
-  };
+        console.log("User data for user ", data);
+        navigate('/questionverification/'+ data.Username);
+       }); 
+      },
+      onFailure: function (err) {
+      alert(err.message || JSON.stringify(err));
+     },   
+    }); 
+   };
+
 
   const handleSignup = () => {
     navigate("/signup");
@@ -82,6 +103,7 @@ const Login = () => {
           <Typography component="h1" variant="h5">
             Login
           </Typography>
+          {/* <QuestionVerification entered_userdata={userData}/> */}
           <Box
             component="form"
             noValidate

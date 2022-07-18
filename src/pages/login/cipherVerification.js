@@ -6,14 +6,32 @@ import {
   Grid,
   TextField,
   Button,
-  Divider,
   Typography,
 } from "@mui/material";
 import { loginValidationMsgs } from "../../utils/loginValidation";
 import { loginValidator } from "../../utils/loginValidation";
+import { useEffect } from "react";
+var result=''
 
 const CipherVerification = () => {
     const [errors, setErrors] = useState({});
+
+    // useEffect(() => {
+    //         var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    //         var charactersLength = characters.length;
+    //         for ( var i = 0; i < 5; i++ ) {
+    //           result += characters.charAt(Math.floor(Math.random() * 
+    //      charactersLength));
+    //        }
+    // },[]);
+
+    // useEffect(() =>{
+    //     const respObj = axios.get("https://us-central1-assignment4serverless-355620.cloudfunctions.net/cipherVerification").then((resp) => 
+    //     {
+    //         const uu = resp.data.Items.find(it => it.user_id.S == params.Username)
+    //         setUsrData(uu)
+    //     }
+    //     )}, [])
 
     const handleCipher = (event) => {
         event.preventDefault();
@@ -40,8 +58,6 @@ const CipherVerification = () => {
       setErrors(errors);
       return;
     }
-    //userData = data;
-    //validateUser();
   };
 
     return (
@@ -61,27 +77,13 @@ const CipherVerification = () => {
                 <Grid item xs={12}>
                     <TextField
                     name="normalText"
-                    defaultValue="AVGB"
-                    required
+                    defaultValue={result}
                     fullWidth
                     disabled
                     id="normalText"
                     label= "Normal Text"
                     error={!!errors.normalText}
                     helperText={errors.normalText}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
-                    name="key"
-                    defaultValue="2"
-                    required
-                    fullWidth
-                    disabled
-                    id="key"
-                    label="Key Value"
-                    error={!!errors.key}
-                    helperText={errors.key}
                     />
                 </Grid>
                 <Grid item xs={12}>
