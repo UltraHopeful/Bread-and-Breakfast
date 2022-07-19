@@ -19,6 +19,7 @@ const AppRoutes = () => {
           </RequireAuth>
         }
       />
+      
     </Routes>
   );
 };
