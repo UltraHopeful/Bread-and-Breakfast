@@ -37,6 +37,7 @@ const HotelBooking = () => {
   const [roomtype, setRoomtype] = useState('');
   const [availability, setAvailability] = useState([]);
   const [open, setOpen] = React.useState(false);
+  const [notification, setNotification] = useState('');
 
   const handleClick = () => {
     setOpen(true);
@@ -169,7 +170,6 @@ const HotelBooking = () => {
         console.log('errror', err);
       });
   };
-
   const handleBookSubmit = (event) => {
     setLoading(true);
     var date1 = new Date(checkin);
@@ -184,45 +184,32 @@ const HotelBooking = () => {
     };
 
     const publishData = {
-      message: 'room booking',
-    };
-    // AXIOS_CLIENT.post('api/pubsub', publishData)
-    //   .then(setTimeout(20000))
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       AXIOS_CLIENT.get('api/pubsub').then((res) => {
-    //         console.log(res.data);
-    //         if (res.data !== '') {
-    //           AXIOS_CLIENT.post('api/hotel/bookroom', formData)
-    //             .then((res) => {
-    //               if (res.status === 200) {
-    //                 setLoading(false);
-    //                 setOpen(true);
-    //               }
-    //             })
-    //             .catch((err) => {
-    //               console.log('errror', err);
-    //             });
-    //         }
-    //       });
-    //     }
-    //   })
+      message : "room booking",
+      path: 'bookroom',
+      checkin: Math.floor(date1.getTime() / 1000).toString(),
+      checkout: Math.floor(date2.getTime() / 1000).toString(),
+      rooms: rooms,
+      roomid: roomtype,
+      user: user
+    }
 
-    //   .catch((err) => {
-    //     console.log('pubsub error: ', err);
-    //   });
+    AXIOS_CLIENT.post('api/hotel/bookroom', formData )
+    .then((res) => {
+          if(res.data.statusCode === 200){
+            console.log(res.data);
+            setLoading(false);
+            setOpen(true);
+            
+          }
+    })
+    .catch((err) => {
+      console.log('pubsub error: ',err)
+    })
 
-    AXIOS_CLIENT.post('api/hotel/bookroom', formData)
-      .then((res) => {
-        if (res.status === 200) {
-          setLoading(false);
-          setOpen(true);
-        }
-      })
-      .catch((err) => {
-        console.log('errror', err);
-      });
   };
+
+
+  
 
   const handleRooms = () => {
     navigate('/hotel/rooms');
@@ -346,7 +333,7 @@ const HotelBooking = () => {
           </Button>
         )}
       </Paper>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+      <Snackbar anchorOrigin={{"vertical": "top", "horizontal":"right" }} open={open} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
           Booking sucessfully Created!
         </Alert>
