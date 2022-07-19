@@ -1,6 +1,14 @@
 import { Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import { Navbar } from '../components';
-import { Home, Login, SignupSteps, HotelBooking, RoomList } from '../pages';
+import {
+  Home,
+  Login,
+  SignupSteps,
+  HotelBooking,
+  RoomList,
+  Kitchen,
+  MealList,
+} from '../pages';
 
 const AppRoutes = () => {
   return (
@@ -9,7 +17,9 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignupSteps />} />
         <Route path="/hotel" element={<HotelBooking />} />
-        <Route path="/rooms" element={<RoomList />} />
+        <Route path="/hotel/rooms" element={<RoomList />} />
+        <Route path="/kitchen" element={<Kitchen />} />
+        <Route path="/kitchen/meals" element={<MealList />} />
       </Route>
       <Route
         path="*"
@@ -35,7 +45,7 @@ const ProtectedRoutes = () => {
 
 const RequireAuth = ({ children }) => {
   // const { isLogin } = useAuth();
-  const isLogin = false;
+  const isLogin = true;
 
   if (!isLogin) {
     return <Navigate to="/login" replace />;
