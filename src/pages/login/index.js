@@ -11,15 +11,57 @@ import {
   Paper,
   Link,
 } from "@mui/material";
-
+import { loginValidator } from "../../utils/loginValidation";
+import { loginValidationMsgs } from "../../utils/loginValidation";
+import { UserPool } from "../../configs";
+let userData = null;
 const Login = () => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setErrors({});
 
     const formdata = new FormData(event.currentTarget);
+    let errors = {};
+    let data = {};
+
+    formdata.forEach((formValue, key) => {
+      const value = formValue.toString().trim();
+      let isValid = false;
+      data[key] = value;
+    
+      isValid = loginValidator(key, value);
+
+      if (!isValid) {
+        errors[key] = loginValidationMsgs(key, value);
+      }
+    });
+
+    const isFormValid = Object.keys(errors).length === 0;
+
+    if (!isFormValid) {
+      setErrors(errors);
+      return;
+    }
+    userData = data;
+    validateUser();
+  };
+
+  const validateUser = async () => {
+
+    UserPool.authenticateUser(
+      userData,
+      (err, data) => {
+        if (err) {
+          alert(err.message);
+        } else {
+          console.log({ user: data });
+          // addAuthenticationDetails(data.userSub);
+        }
+      }
+    );
   };
 
   const handleSignup = () => {

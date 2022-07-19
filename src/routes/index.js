@@ -8,7 +8,30 @@ import {
   RoomList,
   Kitchen,
   MealList,
+  CipherVerification,
+  QuestionVerification,
 } from '../pages';
+import { AmplifyChatbot } from '@aws-amplify/ui-react/legacy';
+import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
+import Fab from '@mui/material/Fab';
+import { Amplify } from 'aws-amplify';
+import React, { useState } from 'react';
+
+Amplify.configure({
+  Auth: {
+    identityPoolId: 'us-east-1:466de39b-520b-4df9-af4b-72a7d70019ee', // (required) Identity Pool ID
+    region: 'us-east-1', // (required) Identity Pool region
+  },
+  Interactions: {
+    bots: {
+      RoomBookingTrial: {
+        name: 'RoomBookingTrial',
+        alias: 'devTrial',
+        region: 'us-east-1',
+      },
+    },
+  },
+});
 
 const AppRoutes = () => {
   return (
@@ -16,6 +39,14 @@ const AppRoutes = () => {
       <Route element={<WithoutNavbar />}>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignupSteps />} />
+
+        <Route
+          path="/questionverification"
+          element={<QuestionVerification />}
+        />
+        <Route path="/cipherVerification" element={<CipherVerification />} />
+      </Route>
+      <Route element={<WithNavbar />}>
         <Route path="/hotel" element={<HotelBooking />} />
         <Route path="/hotel/rooms" element={<RoomList />} />
         <Route path="/kitchen" element={<Kitchen />} />
@@ -55,11 +86,30 @@ const RequireAuth = ({ children }) => {
 };
 
 const WithNavbar = () => {
+  const [show, setShow] = useState(false);
   return (
-    <>
+    <div>
       <Navbar />
+      <div>
+        <Fab
+          color="primary"
+          aria-label="add"
+          className="chatButton"
+          onClick={() => setShow((prev) => !prev)}
+        >
+          <ChatOutlinedIcon />
+        </Fab>
+        {show && (
+          <AmplifyChatbot
+            botName="RoomBookingTrial"
+            botTitle="B &amp; B Assistant Support"
+            welcomeMessage="How can I help you?"
+          />
+        )}
+      </div>
+
       <Outlet />
-    </>
+    </div>
   );
 };
 
