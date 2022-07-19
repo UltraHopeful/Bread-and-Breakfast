@@ -1,31 +1,18 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
-  Container,
-  Typography,
-  Box,
-  Grid,
-  TextField,
-  Button,
-  Paper,
-  Link,
-  ToggleButtonGroup,
-  ToggleButton,
-  Snackbar,
-  StyledEngineProvider,
+  Box, Button, Container, Grid, Link, Paper, Snackbar, TextField, ToggleButton, ToggleButtonGroup, Typography
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import CircularProgress from '@mui/material/CircularProgress';
 
 import AXIOS_CLIENT from '../../utils/api-client';
 
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import MuiAlert from '@mui/material/Alert';
-import { PublicSharp } from '@mui/icons-material';
-import { Toast } from 'bootstrap';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -33,18 +20,9 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 function addMonths(numOfMonths, date = new Date()) {
   date.setMonth(date.getMonth() + numOfMonths);
-
   return date;
 }
-const getDate = (date) => {
-  return (
-    (date.getMonth() > 8 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)) +
-    '/' +
-    (date.getDate() > 9 ? date.getDate() : '0' + date.getDate()) +
-    '/' +
-    date.getFullYear()
-  );
-};
+
 const HotelBooking = () => {
   const user = '123';
   const navigate = useNavigate();
@@ -202,19 +180,9 @@ const HotelBooking = () => {
       checkout: Math.floor(date2.getTime() / 1000).toString(),
       rooms: rooms,
       roomid: roomtype,
-      user: user
-     
+      user: user,
     };
-  
-    const headers = {
-      headers: {
-        "Access-Control-Allow-Origin": "*", 
-        "Access-Control-Allow-Credentials": true, 
-      
-    }
-    }
-    
-    
+
     const publishData = {
       message : "room booking",
       path: 'bookroom',
@@ -244,7 +212,7 @@ const HotelBooking = () => {
   
 
   const handleRooms = () => {
-    navigate('/rooms');
+    navigate('/hotel/rooms');
   };
 
   return (
