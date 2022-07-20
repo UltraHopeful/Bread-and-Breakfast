@@ -39,14 +39,12 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<WithoutNavbar />}>
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
         <Route path="/signup" element={<SignupSteps />} />
-
-        <Route
-          path="/questionverification"
-          element={<QuestionVerification />}
-        />
-        <Route path="/cipherVerification" element={<CipherVerification />} />
+        <Route path="/questionverification" element={<QuestionVerification />} >
+          <Route path = ":Username" element={<QuestionVerification />} />
+        </Route>
+        <Route path="/cipherVerification/:cipherKey" element={<CipherVerification />} />
       </Route>
       <Route element={<WithNavbar />}>
         <Route path="/hotel" element={<HotelBooking />} />
