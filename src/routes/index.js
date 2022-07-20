@@ -39,7 +39,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<WithoutNavbar />}>
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
         <Route path="/signup" element={<SignupSteps />} />
         <Route path="/questionverification" element={<QuestionVerification />} >
           <Route path = ":Username" element={<QuestionVerification />} />

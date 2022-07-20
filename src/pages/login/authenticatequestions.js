@@ -13,7 +13,6 @@ import { loginValidationMsgs } from "../../utils/loginValidation";
 import { loginValidator } from "../../utils/loginValidation";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import constants from "../../constants";
 
 let userInput = null;
 
@@ -35,7 +34,13 @@ const QuestionVerification = () => {
     const handleQuestions = (event) => {
         event.preventDefault();
         setErrors({});
-    
+        const loginData = {
+            cypherKey : usrData.cipher_key.S,
+            cognitoId : usrData.user_id.S
+        }
+        localStorage.setItem('userLoginData', JSON.stringify({loginData}));
+        var userLoginData = localStorage.getItem('userLoginData')
+        console.log(userLoginData)
         const formdata = new FormData(event.currentTarget);
         let errors = {};
         let data = {};
@@ -62,9 +67,10 @@ const QuestionVerification = () => {
   };
   
   const verifyAnswers = () => {
-        console.log("Going to verify answers")
+    let user_id =  usrData.user_id.S
+    console.log(user_id)
         if(userInput.q1 == usrData.answer_1.S && userInput.q2 == usrData.answer_2.S && userInput.q3 == usrData.answer_3.S){
-            navigate("/cipherVerification/"+usrData.user_id.S);
+            navigate("/cipherVerification/"+user_id);
         }
         else{
             alert("Please enter correct answers to proceed further.")

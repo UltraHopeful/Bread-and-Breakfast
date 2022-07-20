@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import LockRoundedIcon from "@mui/icons-material/LockRounded";
 import { useNavigate } from "react-router-dom";
-import { useParams } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -15,14 +14,11 @@ import {
 import { loginValidator } from "../../utils/loginValidation";
 import { loginValidationMsgs } from "../../utils/loginValidation";
 import { UserPool } from "../../configs";
-import { AuthenticationDetails, CognitoUser, UserAgent } from "amazon-cognito-identity-js";
-import axios from "axios";
-import constants from "../../constants";
-import QuestionVerification from "./authenticatequestions";
+import { AuthenticationDetails, CognitoUser } from "amazon-cognito-identity-js";
+
 let userData = null;
 const Login = () => {
   const navigate = useNavigate();
-  const params = useParams();
   const [errors, setErrors] = useState({});
 
   const handleSubmit = (event) => {
@@ -60,21 +56,34 @@ const Login = () => {
       Username: userData.email,
       Password: userData.pass,
     };
+
+    // Connecting to Cognito user pool and authenticating user
     var authenticationDetails = new AuthenticationDetails(authenticationData);
     userData = {
       "Username": userData.email,
       "Pool": UserPool,
     };
+
     var cognitoUser = new CognitoUser(userData);
     cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: function (result) {
         console.log({ result });
+
+        // Storing jst token from Cognito in local storage
+        let jwtToken = result.accessToken.jwtToken
+        localStorage.setItem('jwtToken', JSON.stringify(jwtToken));
+        var token = localStorage.getItem('jwtToken')
+        console.log('token:', token)
+        
         cognitoUser.getUserData(function (err, data) {
         if (err) {
           alert(err.message || JSON.stringify(err));
           return;
         }
         console.log("User data for user ", data);
+        // localStorage.setItem('userLoginData', JSON.stringify({data}));
+        // var userLoginData = localStorage.getItem('userLoginData')
+        // console.log(userLoginData)
         navigate('/questionverification/'+ data.Username);
        }); 
       },
@@ -83,7 +92,6 @@ const Login = () => {
      },   
     }); 
    };
-
 
   const handleSignup = () => {
     navigate("/signup");
