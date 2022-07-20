@@ -1,31 +1,35 @@
-import { AmplifyChatbot } from "@aws-amplify/ui-react/legacy";
-import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
-import Fab from "@mui/material/Fab";
-import { Amplify } from "aws-amplify";
-import React, { useState } from "react";
-import { Navigate, Outlet, Route, Routes } from "react-router-dom";
-import { Navbar } from "../components";
+import { Routes, Route, Outlet, Navigate } from 'react-router-dom';
+import { Navbar } from '../components';
 import {
-  CipherVerification,
   Home,
-  HotelBooking,
   Login,
-  QuestionVerification,
+  SignupSteps,
+  HotelBooking,
   RoomList,
-  SignupSteps
-} from "../pages";
+  Kitchen,
+  MealList,
+  CipherVerification,
+  QuestionVerification,
+  Feedback,
+  Tour,
+} from '../pages';
+import { AmplifyChatbot } from '@aws-amplify/ui-react/legacy';
+import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
+import Fab from '@mui/material/Fab';
+import { Amplify } from 'aws-amplify';
+import React, { useState } from 'react';
 
 Amplify.configure({
   Auth: {
-    identityPoolId: "us-east-1:466de39b-520b-4df9-af4b-72a7d70019ee", // (required) Identity Pool ID
-    region: "us-east-1", // (required) Identity Pool region
+    identityPoolId: 'us-east-1:466de39b-520b-4df9-af4b-72a7d70019ee', // (required) Identity Pool ID
+    region: 'us-east-1', // (required) Identity Pool region
   },
   Interactions: {
     bots: {
       RoomBookingTrial: {
-        name: "RoomBookingTrial",
-        alias: "devTrial",
-        region: "us-east-1",
+        name: 'RoomBookingTrial',
+        alias: 'devTrial',
+        region: 'us-east-1',
       },
     },
   },
@@ -44,7 +48,11 @@ const AppRoutes = () => {
       </Route>
       <Route element={<WithNavbar />}>
         <Route path="/hotel" element={<HotelBooking />} />
-        <Route path="/rooms" element={<RoomList />} />
+        <Route path="/hotel/rooms" element={<RoomList />} />
+        <Route path="/kitchen" element={<Kitchen />} />
+        <Route path="/kitchen/meals" element={<MealList />} />
+        <Route path="/review" element={<Feedback />} />
+        <Route path="/tour" element={<Tour />} />
       </Route>
       <Route
         path="*"
@@ -70,7 +78,7 @@ const ProtectedRoutes = () => {
 
 const RequireAuth = ({ children }) => {
   // const { isLogin } = useAuth();
-  const isLogin = false;
+  const isLogin = true;
 
   if (!isLogin) {
     return <Navigate to="/login" replace />;
