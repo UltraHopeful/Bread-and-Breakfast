@@ -134,7 +134,8 @@ def book_room(event):
 
     if flag:
         batch_write(ROOMS_INVENTORY_TABLE, python_array)
-        booking_id = str(datetime.now()).replace(" ", "-").split(".")[0]
+        booking_id = ''.join(
+            str(datetime.now()).replace(" ", "-").split("."))
         booking_doc = {'user_id': {'S': event['user']},
                        'booking_id':
                        {'S': booking_id}, 'checkin': {'S': event['checkin']}, 'checkout': {'S': event['checkout']}, 'rooms': {'S': event['rooms']}, 'roomtype': {'S': event['roomid']}}

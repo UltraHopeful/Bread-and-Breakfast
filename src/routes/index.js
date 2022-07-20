@@ -10,6 +10,8 @@ import {
   MealList,
   CipherVerification,
   QuestionVerification,
+  Feedback,
+  Tour,
 } from '../pages';
 import { AmplifyChatbot } from '@aws-amplify/ui-react/legacy';
 import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
@@ -51,6 +53,8 @@ const AppRoutes = () => {
         <Route path="/hotel/rooms" element={<RoomList />} />
         <Route path="/kitchen" element={<Kitchen />} />
         <Route path="/kitchen/meals" element={<MealList />} />
+        <Route path="/review" element={<Feedback />} />
+        <Route path="/tour" element={<Tour />} />
       </Route>
       <Route
         path="*"
@@ -60,7 +64,6 @@ const AppRoutes = () => {
           </RequireAuth>
         }
       />
-      
     </Routes>
   );
 };
