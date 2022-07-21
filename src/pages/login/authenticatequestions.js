@@ -9,12 +9,14 @@ import {
   Typography,
 } from "@mui/material";
 import { securityQuestions } from "../../data";
-import { loginValidationMsgs } from "../../utils/loginValidation";
-import { loginValidator } from "../../utils/loginValidation";
+import { questionValidationMsgs } from "../../utils/questionValidation";
+import { questionValidator } from "../../utils/questionValidation";
+
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 let userInput = null;
+
 
 const QuestionVerification = () => {
 
@@ -26,7 +28,7 @@ const QuestionVerification = () => {
     useEffect(() =>{
         const respObj = axios.get("https://yk3ixto4cgv7xpjtucnqsf3ijm0nlcnr.lambda-url.us-east-1.on.aws/").then((resp) => 
         {
-            const uu = resp.data.Items.find(it => it.user_id.S == params.Username)
+           const uu = resp.data.Items.find(it => it.user_id.S == params.Username)
             setUsrData(uu)
         }
         )}, [])
@@ -34,26 +36,20 @@ const QuestionVerification = () => {
     const handleQuestions = (event) => {
         event.preventDefault();
         setErrors({});
-        const loginData = {
-            cypherKey : usrData.cipher_key.S,
-            cognitoId : usrData.user_id.S
-        }
-        localStorage.setItem('userLoginData', JSON.stringify({loginData}));
-        var userLoginData = localStorage.getItem('userLoginData')
-        console.log(userLoginData)
         const formdata = new FormData(event.currentTarget);
         let errors = {};
         let data = {};
     
         formdata.forEach((formValue, key) => {
           const value = formValue.toString().trim();
+          console.log(value)
           let isValid = false;
           data[key] = value;
         
-          isValid = loginValidator(key, value);
+          isValid = questionValidator(key, value);
     
           if (!isValid) {
-            errors[key] = loginValidationMsgs(key, value);
+            errors[key] = questionValidationMsgs(key, value);
           }
         });
         const isFormValid = Object.keys(errors).length === 0;
@@ -62,8 +58,9 @@ const QuestionVerification = () => {
       setErrors(errors);
       return;
     }
+    localStorage.setItem('userLoginData', JSON.stringify({usrData}));
     userInput = data;
-    verifyAnswers()
+    verifyAnswers();
   };
   
   const verifyAnswers = () => {
