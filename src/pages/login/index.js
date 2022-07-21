@@ -14,6 +14,8 @@ import {
 import { loginValidator } from "../../utils/loginValidation";
 import { loginValidationMsgs } from "../../utils/loginValidation";
 import { UserPool } from "../../configs";
+import { AuthenticationDetails, CognitoUser } from "amazon-cognito-identity-js";
+
 let userData = null;
 const Login = () => {
   const navigate = useNavigate();
@@ -50,19 +52,46 @@ const Login = () => {
   };
 
   const validateUser = async () => {
+    var authenticationData = {
+      Username: userData.email,
+      Password: userData.pass,
+    };
 
-    UserPool.authenticateUser(
-      userData,
-      (err, data) => {
+    // Connecting to Cognito user pool and authenticating user
+    var authenticationDetails = new AuthenticationDetails(authenticationData);
+    userData = {
+      "Username": userData.email,
+      "Pool": UserPool,
+    };
+
+    var cognitoUser = new CognitoUser(userData);
+    cognitoUser.authenticateUser(authenticationDetails, {
+      onSuccess: function (result) {
+        console.log({ result });
+
+        // Storing jst token from Cognito in local storage
+        let jwtToken = result.accessToken.jwtToken
+        localStorage.setItem('jwtToken', JSON.stringify(jwtToken));
+        var token = localStorage.getItem('jwtToken')
+        console.log('token:', token)
+        
+        cognitoUser.getUserData(function (err, data) {
         if (err) {
-          alert(err.message);
-        } else {
-          console.log({ user: data });
-          // addAuthenticationDetails(data.userSub);
+          alert(err.message || JSON.stringify(err));
+          return;
         }
-      }
-    );
-  };
+        console.log("User data for user ", data);
+        // localStorage.setItem('userLoginData', JSON.stringify({data}));
+        // var userLoginData = localStorage.getItem('userLoginData')
+        // console.log(userLoginData)
+        navigate('/questionverification/'+ data.Username);
+       }); 
+      },
+      onFailure: function (err) {
+      alert(err.message || JSON.stringify(err));
+     },   
+    }); 
+   };
 
   const handleSignup = () => {
     navigate("/signup");
@@ -82,6 +111,7 @@ const Login = () => {
           <Typography component="h1" variant="h5">
             Login
           </Typography>
+          {/* <QuestionVerification entered_userdata={userData}/> */}
           <Box
             component="form"
             noValidate
