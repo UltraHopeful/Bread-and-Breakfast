@@ -1,5 +1,5 @@
-import { Routes, Route, Outlet, Navigate } from 'react-router-dom';
-import { Navbar } from '../components';
+import { Routes, Route, Outlet, Navigate } from "react-router-dom";
+import { Navbar } from "../components";
 import {
   Home,
   Login,
@@ -12,24 +12,26 @@ import {
   QuestionVerification,
   Feedback,
   Tour,
-} from '../pages';
-import { AmplifyChatbot } from '@aws-amplify/ui-react/legacy';
-import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
-import Fab from '@mui/material/Fab';
-import { Amplify } from 'aws-amplify';
-import React, { useState } from 'react';
+  Profile,
+} from "../pages";
+import { AmplifyChatbot } from "@aws-amplify/ui-react/legacy";
+import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
+import Fab from "@mui/material/Fab";
+import { Amplify } from "aws-amplify";
+import React, { useState } from "react";
+import { useAuth } from "../context";
 
 Amplify.configure({
   Auth: {
-    identityPoolId: 'us-east-1:466de39b-520b-4df9-af4b-72a7d70019ee', // (required) Identity Pool ID
-    region: 'us-east-1', // (required) Identity Pool region
+    identityPoolId: "us-east-1:466de39b-520b-4df9-af4b-72a7d70019ee", // (required) Identity Pool ID
+    region: "us-east-1", // (required) Identity Pool region
   },
   Interactions: {
     bots: {
       RoomBookingTrial: {
-        name: 'RoomBookingTrial',
-        alias: 'devTrial',
-        region: 'us-east-1',
+        name: "RoomBookingTrial",
+        alias: "devTrial",
+        region: "us-east-1",
       },
     },
   },
@@ -39,12 +41,15 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<WithoutNavbar />}>
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignupSteps />} />
-        <Route path="/questionverification" element={<QuestionVerification />} >
-          <Route path = ":Username" element={<QuestionVerification />} />
+        <Route path="/questionverification" element={<QuestionVerification />}>
+          <Route path=":Username" element={<QuestionVerification />} />
         </Route>
-        <Route path="/cipherVerification/:cipherKey" element={<CipherVerification />} />
+        <Route
+          path="/cipherVerification/:cipherKey"
+          element={<CipherVerification />}
+        />
       </Route>
       <Route element={<WithNavbar />}>
         <Route path="/hotel" element={<HotelBooking />} />
@@ -53,6 +58,7 @@ const AppRoutes = () => {
         <Route path="/kitchen/meals" element={<MealList />} />
         <Route path="/review" element={<Feedback />} />
         <Route path="/tour" element={<Tour />} />
+        <Route path="/" element={<Home />} />
       </Route>
       <Route
         path="*"
@@ -70,18 +76,17 @@ const ProtectedRoutes = () => {
   return (
     <Routes>
       <Route element={<WithNavbar />}>
-        <Route path="/" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
       </Route>
     </Routes>
   );
 };
 
 const RequireAuth = ({ children }) => {
-  // const { isLogin } = useAuth();
-  const isLogin = true;
+  const { loggedInUser } = useAuth();
 
-  if (!isLogin) {
-    return <Navigate to="/login" replace />;
+  if (!loggedInUser) {
+    return <Navigate to="/" replace />;
   }
 
   return children;
