@@ -8,46 +8,33 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import { loginValidationMsgs } from "../../utils/loginValidation";
-import { loginValidator } from "../../utils/loginValidation";
+import { cipherValidationMsgs } from "../../utils/cipherValidation";
+import { cipherValidator } from "../../utils/cipherValidation";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import constants from "../../constants";
-var result=''
-var data = {}
+import { input } from "aws-amplify";
 
 const CipherVerification = () => {
     const [errors, setErrors] = useState({});
-    const [usrData, setUsrData] = useState();
-    const [valueData, getData] = useState();
+    const [text, setText] = useState('');
     const params = useParams();
     const navigate = useNavigate();
 
     useEffect(() =>{
-        const respObj = axios.get("https://yk3ixto4cgv7xpjtucnqsf3ijm0nlcnr.lambda-url.us-east-1.on.aws/").then((resp) => 
-        {
-            const uu = resp.data.Items.find(it => it.user_id.S == params.cipherKey)
-            setUsrData(uu)
-            console.log(uu)
-            console.log(uu.cipher_key.S)
-            var key = uu.cipher_key.S
-            data = {
-                cipher_key : key
-            }
-            axios.post("https://pfqnboa6zi.execute-api.us-east-1.amazonaws.com/dev/api/user/cipher_gateway", data).then((response)=>{
-                // setCipherData(response)   
-                console.log(response)
-                console.log(response.data.plainText) 
-                getData(response.data)
+        makeid(5);
+        }, [1])
 
-        }).catch((err)=>{
-        console.log(err)
-        })
-        }).catch((err)=>{
-        alert(err.message)
-        })
-        }, [])
+        function makeid(length) {
+            var normalText = '';
+            var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            var charsLength = chars.length;
+            for ( var i = 0; i < length; i++ ) {
+                normalText += chars.charAt(Math.floor(Math.random() * 
+                charsLength));
+           }
+           setText(normalText);
+        }
 
     const handleCipher = (event) => {
         event.preventDefault();
@@ -61,36 +48,48 @@ const CipherVerification = () => {
           const value = formValue.toString().trim();
           let isValid = false;
           data[key] = value;
-          isValid = loginValidator(key, value);
+          isValid = cipherValidator(key, value);
     
           if (!isValid) {
-            errors[key] = loginValidationMsgs(key, value);
+            errors[key] = cipherValidationMsgs(key, value);
           }
         });
-        
-        
+     
         const isFormValid = Object.keys(errors).length === 0;
-        if(data.convertedCipher == valueData.cipherText){
-            // const postDetails = {
-            //     user_id : usrData.user_id,
-            // }
-            // try {
-            //     const res =  axios.post("https://jpx6jierjufn24fq32bxwkmb240dgrdb.lambda-url.us-east-1.on.aws/", postDetails);
-            //     console.log({ res });
-            //   } catch (e) {
-            //     alert(e.message);
-            //   }
-            navigate("/hotel")
-        }
-        else{
-            alert("Please enter correct cipher!")
-        }
 
     if (!isFormValid) {
       setErrors(errors);
       return;
     }
-    };
+    data = {
+        user_id : params.cipherKey,
+        normal_text : text,
+        cipher_text : data.convertedCipher
+        }
+    // Sending generated normal text, cuser entered cipher text and user id to cloud function
+    axios.post("https://pfqnboa6zi.execute-api.us-east-1.amazonaws.com/dev/api/user/cipher_gateway", data).then((response)=>{ 
+    console.log(response)      
+    if(response.data.status == "success"){
+            const postDetails = {
+                userId : params.cipherKey,
+            }
+            try {
+                // Adding login timestamp against user id into dynamo Db
+                const res =  axios.post("https://pfqnboa6zi.execute-api.us-east-1.amazonaws.com/dev/api/user/logintimeupdate", postDetails);
+                console.log({ res });
+              } catch (e) {
+                alert(e.message);
+              }
+            navigate("/hotel")
+          }
+          else{
+            alert("Please enter correct cipher code!")
+          }
+        }).catch((err)=>{
+            console.log(err)
+        })
+    }
+    
 
     return (
         <Container component="main" maxWidth="sm" sx={{ my: 4 }}>
@@ -109,8 +108,7 @@ const CipherVerification = () => {
                 <Grid item xs={12}>
                     <TextField
                     name="normalText"
-                    // defaultValue={{valueData ? valueData.plainText : ""}}
-                    value={valueData ? valueData.plainText : ""}
+                    value = {text}
                     fullWidth
                     disabled
                     id="normalText"
@@ -122,7 +120,6 @@ const CipherVerification = () => {
                 <Grid item xs={12}>
                     <TextField
                     name="convertedCipher"
-                    defaultValue="CXDIKL"
                     required
                     fullWidth
                     id="convertedCipher"
@@ -145,6 +142,6 @@ const CipherVerification = () => {
         </Paper>
         </Container>
     );
-    };
+};
 
 export default CipherVerification;
