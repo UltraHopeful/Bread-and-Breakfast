@@ -33,7 +33,6 @@ const insertRecord = async (body) => {
         "answer_1": { "S": data.answer_1 },
         "answer_2": { "S": data.answer_2 },
         "answer_3": { "S": data.answer_3 },
-        "cipher_key": { "S": data.cipher_key },
       },
     };
 
