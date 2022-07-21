@@ -3,4 +3,6 @@ const BASE_URL_API_GATEWAY =
 
 export default {
   authenticationDetails: `${BASE_URL_API_GATEWAY}user/authentication_details`,
+  addCipherKey:
+    "https://us-east1-csci5410-serverless-356113.cloudfunctions.net/group26_add_cipher_key",
 };
