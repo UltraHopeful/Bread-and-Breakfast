@@ -19,6 +19,7 @@ import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
 import Fab from "@mui/material/Fab";
 import { Amplify } from "aws-amplify";
 import React, { useState } from "react";
+import { useAuth } from "../context";
 
 Amplify.configure({
   Auth: {
@@ -57,7 +58,7 @@ const AppRoutes = () => {
         <Route path="/kitchen/meals" element={<MealList />} />
         <Route path="/review" element={<Feedback />} />
         <Route path="/tour" element={<Tour />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/" element={<Home />} />
       </Route>
       <Route
         path="*"
@@ -75,18 +76,17 @@ const ProtectedRoutes = () => {
   return (
     <Routes>
       <Route element={<WithNavbar />}>
-        <Route path="/" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
       </Route>
     </Routes>
   );
 };
 
 const RequireAuth = ({ children }) => {
-  // const { isLogin } = useAuth();
-  const isLogin = true;
+  const { loggedInUser } = useAuth();
 
-  if (!isLogin) {
-    return <Navigate to="/login" replace />;
+  if (!loggedInUser) {
+    return <Navigate to="/" replace />;
   }
 
   return children;

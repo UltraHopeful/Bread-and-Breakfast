@@ -1,4 +1,5 @@
 import moment from "moment";
+import { UserPool } from "../configs";
 
 const regEx = {
   email:
@@ -59,5 +60,27 @@ export const formValidationMsgs = (valueType, inputValue) => {
 
     default:
       return "Invalid input";
+  }
+};
+
+export const getLoggedInUser = async () => {
+  const user = UserPool.getCurrentUser();
+  let userSession = null;
+  if (user) {
+    user.getSession((err, session) => {
+      if (session?.idToken?.payload) {
+        userSession = session.idToken.payload;
+      }
+    });
+  }
+
+  return userSession;
+};
+
+export const logoutCognitoUser = () => {
+  const user = UserPool.getCurrentUser();
+
+  if (user) {
+    user.signOut();
   }
 };

@@ -32,7 +32,7 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const login = () => {
-    navigate("/");
+    navigate("/login");
   };
 
   const handleSignup = (event) => {
