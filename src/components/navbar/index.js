@@ -21,6 +21,7 @@ import AXIOS_CLIENT from '../../utils/api-client';
 import RoomServiceIcon from '@mui/icons-material/RoomService';
 import { padding } from '@mui/system';
 import { logoutCognitoUser } from "../../utils";
+import { Badge } from '@mui/material';
 
 const pages = {
   hotel: "Room Booking",
@@ -47,6 +48,7 @@ const Navbar = () => {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [notification, setNotification] = useState([]);
 const [notificationBox, setNotificationBox] = useState(false);
+const[notificationCount, setNotificationCount] = useState(0);
 let notificationList = [];
 const handleClose = (event, reason) => {
   if (reason === 'clickaway') {
@@ -62,10 +64,11 @@ const handleNotificationClick =() => {
   AXIOS_CLIENT.get('api/notification')
     .then((res) => {
       if (res.status === 200) {
-        console.log("message: "+res.data);
+        console.log("message:"+res.data);
         console.log(typeof( res.data.message));
         let data = res.data;
-        if(data !== undefined){
+        if(data !== undefined || data !=="  "){
+          setNotificationCount(notificationCount+1);
           notificationList.push(data);
           setNotificationBox(true);
           console.log(notificationBox);
@@ -219,7 +222,9 @@ const handleNotificationClick =() => {
             ))}
           </Box>
           <div style={{padding: "20px"}}>
+          <Badge badgeContent={notificationCount} color="success">
           <CircleNotificationsIcon onClick={handleNotificationClick} sx={{ fontSize: "50px"}} />
+          </Badge>
           <div>
           
           
@@ -229,12 +234,13 @@ const handleNotificationClick =() => {
               <div>
               {notification.map((noti) => {
                 return(
-                 
+                  
                   <Snackbar anchorOrigin={{"vertical": "top", "horizontal":"right" }} open={notificationBox} autoHideDuration={6000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
                   {noti}
               </Alert>
               </Snackbar>
+             
               
                 );
               })}
