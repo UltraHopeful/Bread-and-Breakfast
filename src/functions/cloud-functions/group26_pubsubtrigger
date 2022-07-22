@@ -1,0 +1,27 @@
+import base64
+import requests
+import json
+def message_passing(event, context):
+    """Triggered from a message on a Cloud Pub/Sub topic.
+    Args:
+         event (dict): Event payload.
+         context (google.cloud.functions.Context): Metadata for the event.
+    """
+    pubsub_message = base64.b64decode(event['data']).decode('utf-8')
+    data = event['data']
+    print("data: "+str(pubsub_message))
+    print("type: "+str(type(pubsub_message)))
+    messageReceived = json.loads(pubsub_message)
+    print(str(messageReceived['message']))
+    if messageReceived['message'] == 'room booking':
+      res = requests.post('https://vgxlalkke3txbcvvhfghor4jaq0yowml.lambda-url.us-east-1.on.aws/', pubsub_message)
+      print("room booking message sent to tour service")
+      return res
+    elif messageReceived['message'] == 'meal order':
+      res = requests.post('https://l5xsvdd354jb4tbav6bq4cmdq40gsbih.lambda-url.us-east-1.on.aws/', pubsub_message)
+      print("food order message sent to hotel")
+      return res
+    elif messageReceived['message'] == 'customer reviews':
+      res = requests.post(' https://us-central1-vinay-serverless.cloudfunctions.net/getSentiment', pubsub_message)
+      print('customer reviews sent to analysis')
+      return res

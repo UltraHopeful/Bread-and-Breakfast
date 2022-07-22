@@ -1,20 +1,25 @@
-import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
 import { useAuth } from "../../context";
-import RoomServiceIcon from "@mui/icons-material/RoomService";
 import { useMemo } from "react";
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import Menu from '@mui/material/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
+import Container from '@mui/material/Container';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import MenuItem from '@mui/material/MenuItem';
+import { Alert } from '@mui/material';
+import { Snackbar } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
+import AXIOS_CLIENT from '../../utils/api-client';
+import RoomServiceIcon from '@mui/icons-material/RoomService';
+import { padding } from '@mui/system';
 import { logoutCognitoUser } from "../../utils";
 
 const pages = {
@@ -36,9 +41,46 @@ const loggedOutRoutes = [
   { name: "Dashboard", route: "dashboard" },
 ];
 
+
 const Navbar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [notification, setNotification] = useState([]);
+const [notificationBox, setNotificationBox] = useState(false);
+let notificationList = [];
+const handleClose = (event, reason) => {
+  if (reason === 'clickaway') {
+    return;
+  }
+  setNotificationBox(false);
+  // window.location.reload();
+};
+
+const handleNotificationClick =() => {
+  // setNotificationBox(true);
+  console.log(notificationBox);
+  AXIOS_CLIENT.get('api/notification')
+    .then((res) => {
+      if (res.status === 200) {
+        console.log("message: "+res.data);
+        console.log(typeof( res.data.message));
+        let data = res.data;
+        if(data !== undefined){
+          notificationList.push(data);
+          setNotificationBox(true);
+          console.log(notificationBox);
+          setNotification(notificationList);
+          console.log("notification : "+notification);
+        }
+        
+        
+      }
+    })
+    .catch((err) => {
+      console.log('errror', err);
+    });
+  
+}
   const { loggedInUser, setLoggedInUser } = useAuth();
   const navigate = useNavigate();
 
@@ -70,6 +112,7 @@ const Navbar = () => {
       }
     }
   };
+
 
   return (
     <AppBar position="static">
@@ -175,7 +218,46 @@ const Navbar = () => {
               </Link>
             ))}
           </Box>
+          <div style={{padding: "20px"}}>
+          <CircleNotificationsIcon onClick={handleNotificationClick} sx={{ fontSize: "50px"}} />
+          <div>
+          
+          
+            {setNotificationBox ? 
+            (
+              
+              <div>
+              {notification.map((noti) => {
+                return(
+                 
+                  <Snackbar anchorOrigin={{"vertical": "top", "horizontal":"right" }} open={notificationBox} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                  {noti}
+              </Alert>
+              </Snackbar>
+              
+                );
+              })}
+              </div>
+          
+              
+            )
+            :
+            (
+            
+              <div>
+               <Snackbar anchorOrigin={{"vertical": "top", "horizontal":"right" }} open={notificationBox} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                  No notifications!!
+              </Alert>
+              </Snackbar></div>
+            )
+            }
+          </div>
+         
+          </div>
 
+          
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -212,6 +294,7 @@ const Navbar = () => {
               ))}
             </Menu>
           </Box>
+         
         </Toolbar>
       </Container>
     </AppBar>

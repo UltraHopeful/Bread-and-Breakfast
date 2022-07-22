@@ -38,7 +38,7 @@ const HotelBooking = () => {
   const [availability, setAvailability] = useState([]);
   const [open, setOpen] = React.useState(false);
   const [notification, setNotification] = useState('');
-
+  
   const handleClick = () => {
     setOpen(true);
   };
@@ -335,6 +335,7 @@ const HotelBooking = () => {
       </Paper>
       <Snackbar anchorOrigin={{"vertical": "top", "horizontal":"right" }} open={open} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          
           Booking sucessfully Created!
         </Alert>
       </Snackbar>{' '}
