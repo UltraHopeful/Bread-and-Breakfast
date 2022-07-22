@@ -13,6 +13,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  CircularProgress,
 } from "@mui/material";
 import { formValidationMsgs, formValidator } from "../../utils";
 import { useNavigate } from "react-router-dom";
@@ -26,6 +27,7 @@ let userData = null;
 const Signup = () => {
   const [errors, setErrors] = useState({});
   const [showDialog, setShowDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -76,7 +78,10 @@ const Signup = () => {
     setShowDialog(false);
     login();
   };
+
   const createUser = async () => {
+    setLoading(true);
+
     const userAttributes = [
       {
         Name: "given_name",
@@ -95,30 +100,42 @@ const Signup = () => {
       null,
       (err, data) => {
         if (err) {
+          setLoading(false);
           alert(err.message);
         } else {
-          console.log({ user: data });
-          addAuthenticationDetails(data.userSub);
+          addSecurityAns(data.userSub);
         }
       }
     );
   };
 
-  const addAuthenticationDetails = async (userId) => {
+  const addSecurityAns = async (userId) => {
     const data = {
       user_id: userId,
       answer_1: userData.q1,
       answer_2: userData.q2,
       answer_3: userData.q3,
-      cipher_key: userData.cipherKey,
     };
 
     try {
       const res = await axios.post(constants.authenticationDetails, data);
-      console.log({ res });
-      setShowDialog(true);
+      addCipherKey(userId);
     } catch (e) {
+      setLoading(false);
+      console.log(e);
       alert(e.message);
+    }
+  };
+
+  const addCipherKey = async (userId) => {
+    try {
+      const data = { user_id: userId, cipher_key: userData.cipherKey };
+      const res = await axios.post(constants.addCipherKey, data);
+      setLoading(false);
+      setShowDialog(true);
+    } catch (error) {
+      setLoading(false);
+      console.log({ error });
     }
   };
 
@@ -265,8 +282,9 @@ const Signup = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 5, mb: 2 }}
+              disabled={loading}
             >
-              Sign up
+              {loading ? <CircularProgress size={24} /> : "Sign up"}
             </Button>
           </Box>
           <Grid container sx={{ justifyContent: "flex-end" }}>

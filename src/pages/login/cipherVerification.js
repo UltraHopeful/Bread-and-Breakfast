@@ -6,110 +6,161 @@ import {
   Grid,
   TextField,
   Button,
-  Divider,
   Typography,
 } from "@mui/material";
-import { loginValidationMsgs } from "../../utils/loginValidation";
-import { loginValidator } from "../../utils/loginValidation";
+import { cipherValidationMsgs } from "../../utils/cipherValidation";
+import { cipherValidator } from "../../utils/cipherValidation";
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from "../../context";
+import { getLoggedInUser } from "../../utils";
 
 const CipherVerification = () => {
-    const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({});
+  const [text, setText] = useState("");
+  const params = useParams();
+  const navigate = useNavigate();
+  const { setLoggedInUser } = useAuth();
 
-    const handleCipher = (event) => {
-        event.preventDefault();
-        setErrors({});
-    
-        const formdata = new FormData(event.currentTarget);
-        let errors = {};
-        let data = {};
-    
-        formdata.forEach((formValue, key) => {
-          const value = formValue.toString().trim();
-          let isValid = false;
-          data[key] = value;
-        
-          isValid = loginValidator(key, value);
-    
-          if (!isValid) {
-            errors[key] = loginValidationMsgs(key, value);
-          }
-        });
-        const isFormValid = Object.keys(errors).length === 0;
+  useEffect(() => {
+    makeid(5);
+  }, [1]);
+
+  function makeid(length) {
+    var normalText = "";
+    var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var charsLength = chars.length;
+    for (var i = 0; i < length; i++) {
+      normalText += chars.charAt(Math.floor(Math.random() * charsLength));
+    }
+    setText(normalText);
+  }
+
+  const handleCipher = (event) => {
+    event.preventDefault();
+    setErrors({});
+
+    const formdata = new FormData(event.currentTarget);
+    let errors = {};
+    let data = {};
+
+    formdata.forEach((formValue, key) => {
+      const value = formValue.toString().trim();
+      let isValid = false;
+      data[key] = value;
+      isValid = cipherValidator(key, value);
+
+      if (!isValid) {
+        errors[key] = cipherValidationMsgs(key, value);
+      }
+    });
+
+    const isFormValid = Object.keys(errors).length === 0;
 
     if (!isFormValid) {
       setErrors(errors);
       return;
     }
-    //userData = data;
-    //validateUser();
+
+    verifyCipher(data.convertedCipher);
   };
 
-    return (
-        <Container component="main" maxWidth="sm" sx={{ my: 4 }}>
-        <Typography variant="h4" sx={{ textAlign: "center" }}>
-        Caesar Cipher Verification
-        </Typography>
-        <Paper variant="outlined" sx={{ mt: 2, p: 4 }}>
-            <Box>
-            <Box
-                component="form"
-                onSubmit={handleCipher}
-                noValidate
-                sx={{ mt: 2 }}
-            >
-                <Grid container spacing={2}>
-                <Grid item xs={12}>
-                    <TextField
-                    name="normalText"
-                    defaultValue="AVGB"
-                    required
-                    fullWidth
-                    disabled
-                    id="normalText"
-                    label= "Normal Text"
-                    error={!!errors.normalText}
-                    helperText={errors.normalText}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
-                    name="key"
-                    defaultValue="2"
-                    required
-                    fullWidth
-                    disabled
-                    id="key"
-                    label="Key Value"
-                    error={!!errors.key}
-                    helperText={errors.key}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
-                    name="convertedCipher"
-                    defaultValue="CXDI"
-                    required
-                    fullWidth
-                    id="convertedCipher"
-                    label="Converted Cipher"
-                    error={!!errors.convertedCipher}
-                    helperText={errors.convertedCipher}
-                    />
-                </Grid>
-                </Grid>
-                <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 5, mb: 2 }}
-                >
-                Verify and Login
-                </Button>
-            </Box>
-            </Box>
-        </Paper>
-        </Container>
-    );
+  const verifyCipher = async (cipherText) => {
+    const data = {
+      user_id: params.cipherKey,
+      normal_text: text,
+      cipher_text: cipherText,
     };
+
+    console.log({ data });
+    //Sending generated normal text, cuser entered cipher text and user id to cloud function
+    try {
+      const cipherRes = await axios.post(
+        "https://pfqnboa6zi.execute-api.us-east-1.amazonaws.com/dev/api/user/cipher_gateway",
+        data
+      );
+
+      if (cipherRes.data.status == "success") {
+        const postDetails = {
+          userId: params.cipherKey,
+        };
+
+        //adding login timestamp
+        try {
+          const timestampRes = await axios.post(
+            "https://pfqnboa6zi.execute-api.us-east-1.amazonaws.com/dev/api/user/logintimeupdate",
+            postDetails
+          );
+
+          const user = await getLoggedInUser();
+
+          if (user) {
+            setLoggedInUser(user);
+            navigate("/");
+          }
+        } catch (e) {
+          alert(e.message);
+        }
+      } else {
+        alert("Please enter correct cipher code!");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  return (
+    <Container component="main" maxWidth="sm" sx={{ my: 4 }}>
+      <Typography variant="h4" sx={{ textAlign: "center" }}>
+        Caesar Cipher Verification
+      </Typography>
+      <Paper variant="outlined" sx={{ mt: 2, p: 4 }}>
+        <Box>
+          <Box
+            component="form"
+            onSubmit={handleCipher}
+            noValidate
+            sx={{ mt: 2 }}
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  name="normalText"
+                  value={text}
+                  fullWidth
+                  disabled
+                  id="normalText"
+                  label="Normal Text"
+                  error={!!errors.normalText}
+                  helperText={errors.normalText}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  name="convertedCipher"
+                  required
+                  fullWidth
+                  id="convertedCipher"
+                  label="Converted Cipher"
+                  error={!!errors.convertedCipher}
+                  helperText={errors.convertedCipher}
+                />
+              </Grid>
+            </Grid>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 5, mb: 2 }}
+            >
+              Verify and Login
+            </Button>
+          </Box>
+        </Box>
+      </Paper>
+    </Container>
+  );
+};
 
 export default CipherVerification;

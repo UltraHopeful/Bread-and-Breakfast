@@ -1,7 +1,12 @@
+import moment from "moment";
+import { UserPool } from "../configs";
+
 const regEx = {
   email:
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
 };
+
+export const dateFormat = (date, format) => moment(date).format(format);
 
 const isEmailValid = (email) => regEx.email.test(email);
 
@@ -55,5 +60,27 @@ export const formValidationMsgs = (valueType, inputValue) => {
 
     default:
       return "Invalid input";
+  }
+};
+
+export const getLoggedInUser = async () => {
+  const user = UserPool.getCurrentUser();
+  let userSession = null;
+  if (user) {
+    user.getSession((err, session) => {
+      if (session?.idToken?.payload) {
+        userSession = session.idToken.payload;
+      }
+    });
+  }
+
+  return userSession;
+};
+
+export const logoutCognitoUser = () => {
+  const user = UserPool.getCurrentUser();
+
+  if (user) {
+    user.signOut();
   }
 };

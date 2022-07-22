@@ -1,15 +1,17 @@
 const aws = require("aws-sdk");
 const ddb = new aws.DynamoDB({ apiVersion: "2012-08-10" });
 
-exports.handler = async (event) => {
+
+exports.handler = async (event, context) => {
+  
   try {
-    const result = await insertRecord(event.body);
+    const data = await fetchRecordData();
+    console.log(data);
     const response = {
       statusCode: "200",
       headers,
-      body: "Success",
-    };
-
+      body: data,
+    }
     return response;
   } catch (e) {
     const response = {
@@ -17,28 +19,18 @@ exports.handler = async (event) => {
       headers,
       body: e.message,
     };
-
     return response;
   }
 };
 
-const insertRecord = async (body) => {
-  const data = JSON.parse(body);
+const params = {
+  TableName : 'group26_users'
+}
 
+const fetchRecordData = async() => {
   try {
-    const params = {
-      TableName: "group26_users",
-      Item: {
-        "user_id": { "S": data.user_id },
-        "answer_1": { "S": data.answer_1 },
-        "answer_2": { "S": data.answer_2 },
-        "answer_3": { "S": data.answer_3 },
-      },
-    };
-
-    const result = await ddb.putItem(params).promise();
-
-    return result;
+    const data = await ddb.scan(params).promise();
+    return data;
   } catch (error) {
     throw error;
   }
