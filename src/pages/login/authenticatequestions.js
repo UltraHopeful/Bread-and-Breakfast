@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Container,
   Paper,
@@ -11,34 +11,21 @@ import {
 import { securityQuestions } from "../../data";
 import { questionValidationMsgs } from "../../utils/questionValidation";
 import { questionValidator } from "../../utils/questionValidation";
-
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
-let userInput = null;
-
-
+var data = {}
 const QuestionVerification = () => {
 
     const params = useParams();
     const navigate = useNavigate();
     const [errors, setErrors] = useState({});
-    const [usrData, setUsrData] = useState();
-
-    useEffect(() =>{
-        const respObj = axios.get("https://yk3ixto4cgv7xpjtucnqsf3ijm0nlcnr.lambda-url.us-east-1.on.aws/").then((resp) => 
-        {
-           const uu = resp.data.Items.find(it => it.user_id.S == params.Username)
-            setUsrData(uu)
-        }
-        )}, [])
 
     const handleQuestions = (event) => {
         event.preventDefault();
         setErrors({});
         const formdata = new FormData(event.currentTarget);
         let errors = {};
-        let data = {};
     
         formdata.forEach((formValue, key) => {
           const value = formValue.toString().trim();
@@ -58,20 +45,34 @@ const QuestionVerification = () => {
       setErrors(errors);
       return;
     }
-    localStorage.setItem('userLoginData', JSON.stringify({usrData}));
-    userInput = data;
     verifyAnswers();
   };
   
-  const verifyAnswers = () => {
-    let user_id =  usrData.user_id.S
-    console.log(user_id)
-        if(userInput.q1 == usrData.answer_1.S && userInput.q2 == usrData.answer_2.S && userInput.q3 == usrData.answer_3.S){
+  const verifyAnswers = async () => {
+    let user_id =  params.Username
+    const userInput = {
+        user_id: params.Username,
+        a1 : data.q1,
+        a2 : data.q2,
+        a3 : data.q3
+      };
+
+      //verifying user answers with backend
+      try {
+        const postUserResp = await axios.post(
+          "https://pfqnboa6zi.execute-api.us-east-1.amazonaws.com/dev/api/user/question_verification",
+          userInput
+        );
+        console.log(postUserResp)
+        if (postUserResp.data == "Success") {
             navigate("/cipherVerification/"+user_id);
         }
-        else{
-            alert("Please enter correct answers to proceed further.")
+        else {
+         alert("Please enter correct answers!");
         }
+    } catch (err) {
+      console.log(err);
+    }
     };
   
     return (
