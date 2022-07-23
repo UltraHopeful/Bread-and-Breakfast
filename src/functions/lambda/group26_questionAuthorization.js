@@ -1,18 +1,36 @@
 const aws = require("aws-sdk");
 const ddb = new aws.DynamoDB({ apiVersion: "2012-08-10" });
 
-
+var userId = '';
 exports.handler = async (event, context) => {
   
+  let user_req = JSON.parse(event.body);
+  console.log(user_req);
+  userId = user_req.user_id;
+  
   try {
-    const data = await fetchRecordData();
-    console.log(data);
-    const response = {
-      statusCode: "200",
-      headers,
-      body: data,
+    const userData = await fetchRecordData(userId);
+
+     var a1 = userData.Item.answer_1.S;
+     var a2 = userData.Item.answer_2.S;
+     var a3 = userData.Item.answer_3.S;
+
+    if(a1 == user_req.a1 && a2 == user_req.a2 && a3 == user_req.a3) {
+      const response = {
+        statusCode: "200",
+        headers,
+        body: "Success",
+      };
+      return response;
     }
-    return response;
+    else{
+      const response = {
+        statusCode: "200",
+        headers,
+        body: "Faliure",
+      };
+      return response;
+    }
   } catch (e) {
     const response = {
       statusCode: "500",
@@ -23,13 +41,16 @@ exports.handler = async (event, context) => {
   }
 };
 
-const params = {
-  TableName : 'group26_users'
-}
+const fetchRecordData = async(userId) => {
+var params = {
+  TableName : 'group26_users',
+  Key: {
+    "user_id": {"S":userId},
+  }
+};
 
-const fetchRecordData = async() => {
-  try {
-    const data = await ddb.scan(params).promise();
+try {
+    const data = await ddb.getItem(params).promise();
     return data;
   } catch (error) {
     throw error;
