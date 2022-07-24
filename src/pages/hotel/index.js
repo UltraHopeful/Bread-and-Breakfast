@@ -1,5 +1,15 @@
 import {
-  Box, Button, Container, Grid, Link, Paper, Snackbar, TextField, ToggleButton, ToggleButtonGroup, Typography
+  Box,
+  Button,
+  Container,
+  Grid,
+  Link,
+  Paper,
+  Snackbar,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import React, { useState } from 'react';
@@ -13,6 +23,7 @@ import MuiAlert from '@mui/material/Alert';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { useAuth } from '../../context';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -24,7 +35,9 @@ function addMonths(numOfMonths, date = new Date()) {
 }
 
 const HotelBooking = () => {
-  const user = '123';
+  const { loggedInUser } = useAuth();
+
+  const user = loggedInUser.sub;
   const navigate = useNavigate();
 
   const [checkin, setCheckin] = useState(null);
@@ -38,7 +51,7 @@ const HotelBooking = () => {
   const [availability, setAvailability] = useState([]);
   const [open, setOpen] = React.useState(false);
   const [notification, setNotification] = useState('');
-  
+
   const handleClick = () => {
     setOpen(true);
   };
@@ -184,32 +197,27 @@ const HotelBooking = () => {
     };
 
     const publishData = {
-      message : "room booking",
+      message: 'room booking',
       path: 'bookroom',
       checkin: Math.floor(date1.getTime() / 1000).toString(),
       checkout: Math.floor(date2.getTime() / 1000).toString(),
       rooms: rooms,
       roomid: roomtype,
-      user: user
-    }
+      user: user,
+    };
 
-    AXIOS_CLIENT.post('api/hotel/bookroom', formData )
-    .then((res) => {
-          if(res.data.statusCode === 200){
-            console.log(res.data);
-            setLoading(false);
-            setOpen(true);
-            
-          }
-    })
-    .catch((err) => {
-      console.log('pubsub error: ',err)
-    })
-
+    AXIOS_CLIENT.post('api/hotel/bookroom', formData)
+      .then((res) => {
+        if (res.data.statusCode === 200) {
+          console.log(res.data);
+          setLoading(false);
+          setOpen(true);
+        }
+      })
+      .catch((err) => {
+        console.log('pubsub error: ', err);
+      });
   };
-
-
-  
 
   const handleRooms = () => {
     navigate('/hotel/rooms');
@@ -333,9 +341,13 @@ const HotelBooking = () => {
           </Button>
         )}
       </Paper>
-      <Snackbar anchorOrigin={{"vertical": "top", "horizontal":"right" }} open={open} autoHideDuration={6000} onClose={handleClose}>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
         <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-          
           Booking sucessfully Created!
         </Alert>
       </Snackbar>{' '}
