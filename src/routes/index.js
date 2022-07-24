@@ -17,9 +17,10 @@ import {
 import { AmplifyChatbot } from "@aws-amplify/ui-react/legacy";
 import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
 import Fab from "@mui/material/Fab";
-import { Amplify } from "aws-amplify";
-import React, { useState } from "react";
+import { Amplify,Auth,Interactions } from "aws-amplify";
+import React, { useState,useEffect } from "react";
 import { useAuth } from "../context";
+import {getUserName} from "../local-storage/index";
 
 Amplify.configure({
   Auth: {
@@ -94,6 +95,20 @@ const RequireAuth = ({ children }) => {
 
 const WithNavbar = () => {
   const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    Auth.configure({
+      identityPoolId: "us-east-1:466de39b-520b-4df9-af4b-72a7d70019ee", // (required) Identity Pool ID
+      region: "us-east-1", // (required) Identity Pool region
+    })
+    console.log(getUserName());
+    Interactions.send("RoomBookingTrial","my userid is "+getUserName()).then((result) => {
+      console.log(result);
+    }).catch((error) => {
+      console.log(error);
+    });
+  }, []);
+
   return (
     <div>
       <Navbar />
@@ -110,7 +125,7 @@ const WithNavbar = () => {
           <AmplifyChatbot
             botName="RoomBookingTrial"
             botTitle="B &amp; B Assistant Support"
-            welcomeMessage="How can I help you?"
+            welcomeMessage="Hi, how can I help you? If you want to know some helpful commands to get your answers faster. Type 'help'."
           />
         )}
       </div>
