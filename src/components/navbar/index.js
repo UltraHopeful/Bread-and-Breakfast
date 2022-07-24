@@ -19,7 +19,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import AXIOS_CLIENT from '../../utils/api-client';
 import RoomServiceIcon from '@mui/icons-material/RoomService';
-import { padding } from '@mui/system';
 import { logoutCognitoUser } from '../../utils';
 import { Badge } from '@mui/material';
 import axios from 'axios';
@@ -34,7 +33,7 @@ const routes = ['hotel', 'kitchen', 'tour'];
 const loggedInRoutes = [
   { name: 'Profile', route: '/profile' },
   { name: 'Dashboard', route: '/dashboard' },
-  { name: 'Feedback', route: '/feedback' },
+  { name: 'Feedback', route: '/review' },
   { name: 'Logout', route: '/' },
 ];
 
