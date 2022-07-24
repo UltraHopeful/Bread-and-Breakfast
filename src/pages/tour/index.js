@@ -6,13 +6,23 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { Box, Container, Paper, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Container,
+  Paper,
+  Skeleton,
+  Stack,
+  Typography,
+} from "@mui/material";
 
 function Tour() {
   const [tours, setTours] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const getData = async () => {
+      setLoading(true);
       try {
         const res = await axios.post(
           "https://4dhkpbeuzfslkqgbodsxmtmu3i0xwzos.lambda-url.us-east-1.on.aws/",
@@ -21,8 +31,10 @@ function Tour() {
 
         console.log({ res });
         setTours(res.data);
+        setLoading(false);
       } catch (error) {
         console.log({ error });
+        setLoading(false);
       }
     };
 
@@ -70,9 +82,12 @@ function Tour() {
             </TableBody>
           </Table>
         </TableContainer>
+        {loading && (
+          <Skeleton variant="rectangular" width={"100%"} height={200} />
+        )}
         {tours.length < 1 && (
           <Typography variant="h6" textAlign="center" sx={{ py: 5 }}>
-            No Tours found
+            {loading ? "Loading..." : "No Tours found"}
           </Typography>
         )}
       </Paper>
