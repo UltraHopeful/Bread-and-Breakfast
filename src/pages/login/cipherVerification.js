@@ -84,6 +84,7 @@ const CipherVerification = () => {
       if (cipherRes.data.status == "success") {
         const postDetails = {
           userId: params.cipherKey,
+          event_type: "login",
         };
 
         //adding login timestamp

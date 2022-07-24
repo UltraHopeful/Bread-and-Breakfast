@@ -21,6 +21,7 @@ import AXIOS_CLIENT from "../../utils/api-client";
 import RoomServiceIcon from "@mui/icons-material/RoomService";
 import { logoutCognitoUser } from "../../utils";
 import { Badge } from "@mui/material";
+import axios from "axios";
 
 const pages = {
   "hotel": "Room Booking",
@@ -37,7 +38,7 @@ const adminRoutes = [{ name: "Logout", route: "/" }];
 const loggedInRoutes = [
   { name: "Profile", route: "/profile" },
   { name: "Dashboard", route: "/dashboard" },
-  { name: "Feedback", route: "/feedback" },
+  { name: "Feedback", route: "/review" },
   { name: "Logout", route: "/" },
 ];
 
@@ -101,15 +102,11 @@ const Navbar = () => {
   }, [loggedInUser]);
 
   const navPages = useMemo(() => {
-    if (loggedInUser) {
-      if (loggedInUser.email === "admin@dal.ca") {
-        return ["user-feedback"];
-      }
-
-      return loggedInRoutes;
-    } else {
-      return routes;
+    if (loggedInUser?.email === "admin@dal.ca") {
+      return ["user-feedback"];
     }
+
+    return routes;
   }, [loggedInUser]);
 
   const handleOpenNavMenu = (event) => {
@@ -131,6 +128,15 @@ const Navbar = () => {
 
       if (route === "/") {
         await logoutCognitoUser();
+        const postDetails = {
+          userId: loggedInUser.sub,
+          event_type: "logout",
+        };
+
+        const timestampRes = await axios.post(
+          "https://pfqnboa6zi.execute-api.us-east-1.amazonaws.com/dev/api/user/logintimeupdate",
+          postDetails
+        );
         setLoggedInUser(null);
       }
     }

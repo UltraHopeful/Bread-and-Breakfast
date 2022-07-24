@@ -58,23 +58,25 @@ const Admin = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.map((user, index) => (
-                <TableRow
-                  key={index + ""}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell align="center">{user.user_id}</TableCell>
-                  <TableCell align="center">{user.firstname}</TableCell>
-                  <TableCell align="center">{user.lastname}</TableCell>
-                  <TableCell align="center">{user.email}</TableCell>
-                  <TableCell align="center">
-                    {dateFormat(user.timestamp, "DD-MM-YYYY:HH:mm a")}
-                  </TableCell>
-                  <TableCell align="center">
-                    {user.login ? "Login" : "Logged Out"}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {users.map((user, index) =>
+                user.email !== "admin@dal.ca" ? (
+                  <TableRow
+                    key={index + ""}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell align="center">{user.user_id}</TableCell>
+                    <TableCell align="center">{user.firstname}</TableCell>
+                    <TableCell align="center">{user.lastname}</TableCell>
+                    <TableCell align="center">{user.email}</TableCell>
+                    <TableCell align="center">
+                      {dateFormat(user.timestamp, "DD-MM-YYYY:HH:mm a")}
+                    </TableCell>
+                    <TableCell align="center">
+                      {user.login ? "Login" : "Logged Out"}
+                    </TableCell>
+                  </TableRow>
+                ) : null
+              )}
             </TableBody>
           </Table>
         </TableContainer>
