@@ -115,14 +115,19 @@ const Signup = () => {
       answer_1: userData.q1,
       answer_2: userData.q2,
       answer_3: userData.q3,
+      email: userData.email,
+      firstname: userData.fname,
+      lastname: userData.lname,
     };
+
+    console.log({ data });
 
     try {
       const res = await axios.post(constants.authenticationDetails, data);
       addCipherKey(userId);
     } catch (e) {
       setLoading(false);
-      console.log(e);
+      console.log({ dynamo: e.message });
       alert(e.message);
     }
   };
@@ -221,10 +226,10 @@ const Signup = () => {
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
-                  defaultValue="John"
                   required
                   fullWidth
                   id="q1"
+                  name="q1"
                   label={securityQuestions[0]}
                   error={!!errors.q1}
                   helperText={errors.q1}
@@ -232,10 +237,10 @@ const Signup = () => {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  defaultValue="Doe"
                   required
                   fullWidth
                   id="q2"
+                  name="q2"
                   label={securityQuestions[1]}
                   error={!!errors.q2}
                   helperText={errors.q2}
@@ -243,10 +248,10 @@ const Signup = () => {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  defaultValue="Doe"
                   required
                   fullWidth
                   id="q3"
+                  name="q3"
                   label={securityQuestions[2]}
                   error={!!errors.q3}
                   helperText={errors.q3}

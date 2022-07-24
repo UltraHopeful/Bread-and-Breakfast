@@ -63,6 +63,7 @@ const Profile = () => {
                   <TableCell align="center">Check-Out</TableCell>
                   <TableCell align="center">Rooms Type</TableCell>
                   <TableCell align="center">Rooms Booked</TableCell>
+                  <TableCell align="center">Bill</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -80,6 +81,7 @@ const Profile = () => {
                     </TableCell>
                     <TableCell align="center">{booking.roomtype}</TableCell>
                     <TableCell align="center">{booking.rooms}</TableCell>
+                    <TableCell align="center">{booking.total_bill}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

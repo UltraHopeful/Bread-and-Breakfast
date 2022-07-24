@@ -33,7 +33,7 @@ const Login = () => {
       const value = formValue.toString().trim();
       let isValid = false;
       data[key] = value;
-    
+
       isValid = loginValidator(key, value);
 
       if (!isValid) {
@@ -60,8 +60,8 @@ const Login = () => {
     // Connecting to Cognito user pool and authenticating user
     var authenticationDetails = new AuthenticationDetails(authenticationData);
     userData = {
-      "Username": userData.email,
-      "Pool": UserPool,
+      Username: userData.email,
+      Pool: UserPool,
     };
 
     var cognitoUser = new CognitoUser(userData);
@@ -70,25 +70,25 @@ const Login = () => {
         console.log({ result });
 
         // Storing jwt token from Cognito in local storage
-        let jwtToken = result.accessToken.jwtToken
-        localStorage.setItem('jwtToken', JSON.stringify(jwtToken));
+        let jwtToken = result.accessToken.jwtToken;
+        localStorage.setItem("jwtToken", JSON.stringify(jwtToken));
         cognitoUser.getUserData(function (err, data) {
-        if (err) {
-          alert(err.message || JSON.stringify(err));
-          return;
-        }
-        console.log("User data for user ", data);
-        navigate('/questionverification/'+ data.Username);
-       }); 
+          if (err) {
+            alert(err.message || JSON.stringify(err));
+            return;
+          }
+          console.log("User data for user ", data);
+          navigate("/questionverification/" + data.Username);
+        });
       },
       onFailure: function (err) {
-      alert(err.message || JSON.stringify(err));
-     },   
-    }); 
-   };
+        alert(err.message || JSON.stringify(err));
+      },
+    });
+  };
 
   const handleSignup = () => {
-    navigate("/signp");
+    navigate("/signup");
   };
 
   return (

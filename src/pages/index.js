@@ -10,6 +10,8 @@ import MealList from "./meals";
 import Feedback from "./feedback";
 import Tour from "./tour";
 import Profile from "./profile";
+import Admin from "./admin";
+import UserFeedback from "./admin/user-feedback";
 
 export {
   Login,
@@ -24,4 +26,6 @@ export {
   Feedback,
   Tour,
   Profile,
+  Admin,
+  UserFeedback,
 };

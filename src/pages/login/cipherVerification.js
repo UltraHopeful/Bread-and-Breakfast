@@ -97,7 +97,12 @@ const CipherVerification = () => {
 
           if (user) {
             setLoggedInUser(user);
-            navigate("/");
+
+            if (user.email === "admin@dal.ca") {
+              navigate("/admin");
+            } else {
+              navigate("/");
+            }
           }
         } catch (e) {
           alert(e.message);
