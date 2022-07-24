@@ -88,7 +88,7 @@ const Login = () => {
    };
 
   const handleSignup = () => {
-    navigate("/signup");
+    navigate("/");
   };
 
   return (

@@ -97,7 +97,7 @@ const CipherVerification = () => {
 
           if (user) {
             setLoggedInUser(user);
-            navigate("/");
+            navigate("/home");
           }
         } catch (e) {
           alert(e.message);
