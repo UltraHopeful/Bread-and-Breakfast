@@ -1,5 +1,5 @@
-import { Routes, Route, Outlet, Navigate } from "react-router-dom";
-import { Navbar } from "../components";
+import { Routes, Route, Outlet, Navigate } from 'react-router-dom';
+import { Navbar } from '../components';
 import {
   Home,
   Login,
@@ -15,26 +15,27 @@ import {
   Profile,
   Admin,
   UserFeedback,
-} from "../pages";
-import { AmplifyChatbot } from "@aws-amplify/ui-react/legacy";
-import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
-import Fab from "@mui/material/Fab";
-import { Amplify, Auth, Interactions } from "aws-amplify";
-import React, { useState, useEffect } from "react";
-import { useAuth } from "../context";
-import { getUserName } from "../local-storage/index";
+  Dashboard,
+} from '../pages';
+import { AmplifyChatbot } from '@aws-amplify/ui-react/legacy';
+import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
+import Fab from '@mui/material/Fab';
+import { Amplify, Auth, Interactions } from 'aws-amplify';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context';
+import { getUserName } from '../local-storage/index';
 
 Amplify.configure({
   Auth: {
-    identityPoolId: "us-east-1:466de39b-520b-4df9-af4b-72a7d70019ee", // (required) Identity Pool ID
-    region: "us-east-1", // (required) Identity Pool region
+    identityPoolId: 'us-east-1:466de39b-520b-4df9-af4b-72a7d70019ee', // (required) Identity Pool ID
+    region: 'us-east-1', // (required) Identity Pool region
   },
   Interactions: {
     bots: {
       RoomBookingTrial: {
-        name: "RoomBookingTrial",
-        alias: "devTrial",
-        region: "us-east-1",
+        name: 'RoomBookingTrial',
+        alias: 'devTrial',
+        region: 'us-east-1',
       },
     },
   },
@@ -62,6 +63,7 @@ const AppRoutes = () => {
         <Route path="/review" element={<Feedback />} />
         <Route path="/tour" element={<Tour />} />
         <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Route>
       <Route
         path="*"
@@ -102,11 +104,11 @@ const WithNavbar = () => {
 
   useEffect(() => {
     Auth.configure({
-      identityPoolId: "us-east-1:466de39b-520b-4df9-af4b-72a7d70019ee", // (required) Identity Pool ID
-      region: "us-east-1", // (required) Identity Pool region
+      identityPoolId: 'us-east-1:466de39b-520b-4df9-af4b-72a7d70019ee', // (required) Identity Pool ID
+      region: 'us-east-1', // (required) Identity Pool region
     });
     console.log(getUserName());
-    Interactions.send("RoomBookingTrial", "my userid is " + getUserName())
+    Interactions.send('RoomBookingTrial', 'my userid is ' + getUserName())
       .then((result) => {
         console.log(result);
       })

@@ -30,7 +30,8 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 const Kitchen = () => {
   const { loggedInUser } = useAuth();
 
-  const user = loggedInUser.sub;
+  const user = loggedInUser?.sub || null;
+
   const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [bookingId, setBookingId] = useState('');
@@ -66,6 +67,9 @@ const Kitchen = () => {
       return;
     }
     setOpen(false);
+    if (!user) {
+      navigate('/login');
+    }
     window.location.reload();
   };
 
@@ -73,6 +77,13 @@ const Kitchen = () => {
     event.preventDefault();
 
     try {
+      if (user == null) {
+        const message = 'User Login is Required';
+        // setError(true);
+        // setErrorMsg(message);
+        setOpen(true);
+        return;
+      }
       if (!bookingId) {
         const message = 'Booking Id is Field is Required';
         setError(true);
@@ -281,8 +292,12 @@ const Kitchen = () => {
         )}
       </Paper>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-          Booking sucessfully Created!
+        <Alert
+          onClose={handleClose}
+          severity={user ? 'success' : 'error'}
+          sx={{ width: '100%' }}
+        >
+          {user ? 'Order being proccessed!' : 'Login is required'}
         </Alert>
       </Snackbar>{' '}
     </Container>

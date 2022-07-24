@@ -40,7 +40,7 @@ themeTypography.typography.overline = {
 const Feedback = () => {
   const { loggedInUser } = useAuth();
 
-  const user = loggedInUser.sub;
+  const user = loggedInUser?.sub || null;
   const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [bookingId, setBookingId] = useState('');
@@ -74,6 +74,9 @@ const Feedback = () => {
       return;
     }
     setOpen(false);
+    if (!user) {
+      navigate('/login');
+    }
     window.location.reload();
   };
 
@@ -81,6 +84,10 @@ const Feedback = () => {
     event.preventDefault();
     console.log();
     try {
+      if (!user) {
+        setOpen(true);
+        return;
+      }
       if (!bookingId) {
         const message = 'Booking Id Field is Required';
         setError(true);
@@ -191,8 +198,12 @@ const Feedback = () => {
         </Box>
       </Paper>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-          Thanks for Submitting Feedback
+        <Alert
+          onClose={handleClose}
+          severity={user ? 'success' : 'error'}
+          sx={{ width: '100%' }}
+        >
+          {user ? 'Thanks for submmiting feedback' : 'Login is required'}
         </Alert>
       </Snackbar>{' '}
     </Container>

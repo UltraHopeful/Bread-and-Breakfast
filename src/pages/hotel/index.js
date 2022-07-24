@@ -37,7 +37,7 @@ function addMonths(numOfMonths, date = new Date()) {
 const HotelBooking = () => {
   const { loggedInUser } = useAuth();
 
-  const user = loggedInUser.sub;
+  const user = loggedInUser?.sub || null;
   const navigate = useNavigate();
 
   const [checkin, setCheckin] = useState(null);
@@ -61,6 +61,9 @@ const HotelBooking = () => {
     }
 
     setOpen(false);
+    if (!user) {
+      navigate('/login');
+    }
     window.location.reload();
   };
 
@@ -122,6 +125,11 @@ const HotelBooking = () => {
     event.preventDefault();
 
     try {
+      if (!user) {
+        const message = 'User Login is Required';
+        setOpen(true);
+        return;
+      }
       if (!checkin) {
         const message = 'Check In Field is Required';
         setError(true);
@@ -341,14 +349,13 @@ const HotelBooking = () => {
           </Button>
         )}
       </Paper>
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-      >
-        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-          Booking sucessfully Created!
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert
+          onClose={handleClose}
+          severity={user ? 'success' : 'error'}
+          sx={{ width: '100%' }}
+        >
+          {user ? 'Booking sucessfully Created!' : 'Login is required'}
         </Alert>
       </Snackbar>{' '}
     </Container>
