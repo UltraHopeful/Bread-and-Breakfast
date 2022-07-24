@@ -1,8 +1,10 @@
+:root,html.hydrated,.menu-title {
+  --bs-font-sans-serif: "Lato",sans-serif!important;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: "Lato",sans-serif!important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -17,10 +19,12 @@ amplify-chatbot.hydrated {
   --bot-text-color: white;
   --user-background-color: #7a7a7a;
   --amplify-primary-color: #326dd9;
-  --height: 70vh;
+  --height: 75vh;
+  --width: 45vw;
+  --amplify-font-family: 'Lato',sans-serif;
   display: block;
   position: fixed;
-  bottom: 65px;
+  bottom: 55px;
   right: 20px;
   z-index: 9999;
   /* background: #f5f3f3; */
@@ -31,6 +35,29 @@ amplify-chatbot.hydrated {
 .chatButton {
   position: fixed !important;
   background-color: #326dd9 !important;
-  bottom: 20px;
+  bottom: 10px;
   right: 20px;
+}
+
+.homeHeader{
+  min-height:100vh;
+  background:linear-gradient(297deg, rgba(50,109,217,0.4) 35%, rgba(0,0,0,0.6) 100%), url("../public/homeHeader.jpg");
+  /*background:linear-gradient(130deg, rgba(238,53,42,0.45) 20%, rgba(2,0,36,0.45) 60%, rgba(255,255,255,0.25) 81%), url("assets/images/loginBack.jpg");*/
+  /*background: rgba(238, 53, 42,0.5);*/
+  background-size: cover;
+  background-position: center;
+}
+
+.img-responsive{
+  max-width: 100%;
+  height:100%;
+}
+
+.sideBox{
+  background-color: #24437e;
+  padding:30px;
+}
+
+.imgBox {
+  display: contents;
 }
