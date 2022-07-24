@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Container,
   Paper,
@@ -7,18 +7,18 @@ import {
   TextField,
   Button,
   Typography,
-} from "@mui/material";
-import { cipherValidationMsgs } from "../../utils/cipherValidation";
-import { cipherValidator } from "../../utils/cipherValidation";
-import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import { useAuth } from "../../context";
-import { getLoggedInUser } from "../../utils";
+} from '@mui/material';
+import { cipherValidationMsgs } from '../../utils/cipherValidation';
+import { cipherValidator } from '../../utils/cipherValidation';
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
+import { useAuth } from '../../context';
+import { getLoggedInUser } from '../../utils';
 
 const CipherVerification = () => {
   const [errors, setErrors] = useState({});
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   const params = useParams();
   const navigate = useNavigate();
   const { setLoggedInUser } = useAuth();
@@ -28,8 +28,8 @@ const CipherVerification = () => {
   }, [1]);
 
   function makeid(length) {
-    var normalText = "";
-    var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var normalText = '';
+    var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     var charsLength = chars.length;
     for (var i = 0; i < length; i++) {
       normalText += chars.charAt(Math.floor(Math.random() * charsLength));
@@ -77,19 +77,20 @@ const CipherVerification = () => {
     //Sending generated normal text, cuser entered cipher text and user id to cloud function
     try {
       const cipherRes = await axios.post(
-        "https://pfqnboa6zi.execute-api.us-east-1.amazonaws.com/dev/api/user/cipher_gateway",
+        'https://pfqnboa6zi.execute-api.us-east-1.amazonaws.com/dev/api/user/cipher_gateway',
         data
       );
 
-      if (cipherRes.data.status == "success") {
+      if (cipherRes.data.status == 'success') {
         const postDetails = {
           userId: params.cipherKey,
+          event_type: 'login',
         };
 
         //adding login timestamp
         try {
           const timestampRes = await axios.post(
-            "https://pfqnboa6zi.execute-api.us-east-1.amazonaws.com/dev/api/user/logintimeupdate",
+            'https://pfqnboa6zi.execute-api.us-east-1.amazonaws.com/dev/api/user/logintimeupdate',
             postDetails
           );
 
@@ -97,13 +98,13 @@ const CipherVerification = () => {
 
           if (user) {
             setLoggedInUser(user);
-            navigate("/");
+            navigate('/');
           }
         } catch (e) {
           alert(e.message);
         }
       } else {
-        alert("Please enter correct cipher code!");
+        alert('Please enter correct cipher code!');
       }
     } catch (err) {
       console.log(err);
@@ -112,7 +113,7 @@ const CipherVerification = () => {
 
   return (
     <Container component="main" maxWidth="sm" sx={{ my: 4 }}>
-      <Typography variant="h4" sx={{ textAlign: "center" }}>
+      <Typography variant="h4" sx={{ textAlign: 'center' }}>
         Caesar Cipher Verification
       </Typography>
       <Paper variant="outlined" sx={{ mt: 2, p: 4 }}>

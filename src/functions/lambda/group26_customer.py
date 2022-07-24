@@ -1,5 +1,8 @@
 import boto3
 from datetime import datetime
+import json
+import http.client
+
 
 TABLE_USER_FEEDBACK = "group26_user_reviews"
 
@@ -33,6 +36,16 @@ def save_review(event):
     data["booking_id"] = event["booking_id"]
     data["review"] = event["review"]
     res1 = table.put_item(Item=data)
+    conn = http.client.HTTPSConnection(
+        "us-central1-vinay-serverless.cloudfunctions.net")
+    payload = json.dumps(data)
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    conn.request("POST", "/getSentiment", payload, headers)
+    res = conn.getresponse()
+    data = res.read()
+    print(data.decode("utf-8"))
 
     return {
         'statusCode': 200,

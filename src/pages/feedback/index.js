@@ -53,7 +53,7 @@ const Feedback = () => {
       path: 'getbookings',
       user: user,
     };
-
+    console.log(formData);
     AXIOS_CLIENT.post('api/hotel/getbookings', formData).then((res) => {
       if (res.status === 200 && res.data.statusCode === 200) {
         let date1 = new Date();

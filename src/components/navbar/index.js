@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from "../../context";
-import { useMemo } from "react";
+import { useAuth } from '../../context';
+import { useMemo } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -20,70 +20,67 @@ import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import AXIOS_CLIENT from '../../utils/api-client';
 import RoomServiceIcon from '@mui/icons-material/RoomService';
 import { padding } from '@mui/system';
-import { logoutCognitoUser } from "../../utils";
+import { logoutCognitoUser } from '../../utils';
 import { Badge } from '@mui/material';
+import axios from 'axios';
 
 const pages = {
-  hotel: "Room Booking",
-  kitchen: "Order Meal",
-  tour: "Tour Service",
+  hotel: 'Room Booking',
+  kitchen: 'Order Meal',
+  tour: 'Tour Service',
 };
-const routes = ["hotel", "kitchen", "tour"];
+const routes = ['hotel', 'kitchen', 'tour'];
 
 const loggedInRoutes = [
-  { name: "Profile", route: "/profile" },
-  { name: "Dashboard", route: "/dashboard" },
-  { name: "Feedback", route: "/feedback" },
-  { name: "Logout", route: "/" },
+  { name: 'Profile', route: '/profile' },
+  { name: 'Dashboard', route: '/dashboard' },
+  { name: 'Feedback', route: '/feedback' },
+  { name: 'Logout', route: '/' },
 ];
 
 const loggedOutRoutes = [
-  { name: "Login", route: "login" },
-  { name: "Dashboard", route: "dashboard" },
+  { name: 'Login', route: 'login' },
+  { name: 'Dashboard', route: 'dashboard' },
 ];
-
 
 const Navbar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [notification, setNotification] = useState([]);
-const [notificationBox, setNotificationBox] = useState(false);
-const[notificationCount, setNotificationCount] = useState(0);
-let notificationList = [];
-const handleClose = (event, reason) => {
-  if (reason === 'clickaway') {
-    return;
-  }
-  setNotificationBox(false);
-  // window.location.reload();
-};
+  const [notificationBox, setNotificationBox] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0);
+  let notificationList = [];
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setNotificationBox(false);
+    // window.location.reload();
+  };
 
-const handleNotificationClick =() => {
-  // setNotificationBox(true);
-  console.log(notificationBox);
-  AXIOS_CLIENT.get('api/notification')
-    .then((res) => {
-      if (res.status === 200) {
-        console.log("message:"+res.data);
-        console.log(typeof( res.data.message));
-        let data = res.data;
-        if(data !== undefined || data !=="  "){
-          setNotificationCount(notificationCount+1);
-          notificationList.push(data);
-          setNotificationBox(true);
-          console.log(notificationBox);
-          setNotification(notificationList);
-          console.log("notification : "+notification);
+  const handleNotificationClick = () => {
+    // setNotificationBox(true);
+    console.log(notificationBox);
+    AXIOS_CLIENT.get('api/notification')
+      .then((res) => {
+        if (res.status === 200) {
+          console.log('message:' + res.data);
+          console.log(typeof res.data.message);
+          let data = res.data;
+          if (data !== undefined || data !== '  ') {
+            setNotificationCount(notificationCount + 1);
+            notificationList.push(data);
+            setNotificationBox(true);
+            console.log(notificationBox);
+            setNotification(notificationList);
+            console.log('notification : ' + notification);
+          }
         }
-        
-        
-      }
-    })
-    .catch((err) => {
-      console.log('errror', err);
-    });
-  
-}
+      })
+      .catch((err) => {
+        console.log('errror', err);
+      });
+  };
   const { loggedInUser, setLoggedInUser } = useAuth();
   const navigate = useNavigate();
 
@@ -109,20 +106,28 @@ const handleNotificationClick =() => {
     if (route) {
       navigate(route);
 
-      if (route === "/") {
+      if (route === '/') {
         await logoutCognitoUser();
+        const postDetails = {
+          userId: loggedInUser.sub,
+          event_type: 'logout',
+        };
+
+        const timestampRes = await axios.post(
+          'https://pfqnboa6zi.execute-api.us-east-1.amazonaws.com/dev/api/user/logintimeupdate',
+          postDetails
+        );
         setLoggedInUser(null);
       }
     }
   };
-
 
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <RoomServiceIcon
-            sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
+            sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
           />
           <Typography
             variant="h6"
@@ -131,18 +136,18 @@ const handleNotificationClick =() => {
             href="/"
             sx={{
               mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
               fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
             }}
           >
             B&B
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -157,18 +162,18 @@ const handleNotificationClick =() => {
               id="menu-appbar"
               anchorEl={anchorElNav}
               anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
+                vertical: 'bottom',
+                horizontal: 'left',
               }}
               keepMounted
               transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
+                vertical: 'top',
+                horizontal: 'left',
               }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
-                display: { xs: "block", md: "none" },
+                display: { xs: 'block', md: 'none' },
               }}
             >
               {routes.map((page) => (
@@ -176,11 +181,11 @@ const handleNotificationClick =() => {
                   <MenuItem
                     key={page}
                     onClick={handleCloseNavMenu}
-                    sx={{ background: "" }}
+                    sx={{ background: '' }}
                   >
-                    <Button key={page} sx={{ color: "#58616e" }}>
+                    <Button key={page} sx={{ color: '#58616e' }}>
                       {pages[page]}
-                    </Button>{" "}
+                    </Button>{' '}
                   </MenuItem>
                 </Link>
               ))}
@@ -188,7 +193,7 @@ const handleNotificationClick =() => {
           </Box>
 
           <RoomServiceIcon
-            sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
+            sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
           />
           <Typography
             variant="h5"
@@ -197,94 +202,101 @@ const handleNotificationClick =() => {
             href=""
             sx={{
               mr: 2,
-              display: { xs: "flex", md: "none" },
+              display: { xs: 'flex', md: 'none' },
               flexGrow: 1,
-              fontFamily: "monospace",
+              fontFamily: 'monospace',
               fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
             }}
           >
             B&B
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {routes.map((page) => (
               <Link to={page} key={page}>
                 <Button
                   key={page}
-                  sx={{ my: 2, color: "white", display: "block" }}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
                 >
                   {pages[page]}
                 </Button>
               </Link>
             ))}
           </Box>
-          <div style={{padding: "20px"}}>
-          <Badge badgeContent={notificationCount} color="success">
-          <CircleNotificationsIcon onClick={handleNotificationClick} sx={{ fontSize: "50px"}} />
-          </Badge>
-          <div>
-          
-          
-            {setNotificationBox ? 
-            (
-              
-              <div>
-              {notification.map((noti) => {
-                return(
-                  
-                  <Snackbar anchorOrigin={{"vertical": "top", "horizontal":"right" }} open={notificationBox} autoHideDuration={6000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                  {noti}
-              </Alert>
-              </Snackbar>
-             
-              
-                );
-              })}
-              </div>
-          
-              
-            )
-            :
-            (
-            
-              <div>
-               <Snackbar anchorOrigin={{"vertical": "top", "horizontal":"right" }} open={notificationBox} autoHideDuration={6000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                  No notifications!!
-              </Alert>
-              </Snackbar></div>
-            )
-            }
-          </div>
-         
+          <div style={{ padding: '20px' }}>
+            <Badge badgeContent={notificationCount} color="success">
+              <CircleNotificationsIcon
+                onClick={handleNotificationClick}
+                sx={{ fontSize: '50px' }}
+              />
+            </Badge>
+            <div>
+              {setNotificationBox ? (
+                <div>
+                  {notification.map((noti) => {
+                    return (
+                      <Snackbar
+                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        open={notificationBox}
+                        autoHideDuration={6000}
+                        onClose={handleClose}
+                      >
+                        <Alert
+                          onClose={handleClose}
+                          severity="success"
+                          sx={{ width: '100%' }}
+                        >
+                          {noti}
+                        </Alert>
+                      </Snackbar>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div>
+                  <Snackbar
+                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    open={notificationBox}
+                    autoHideDuration={6000}
+                    onClose={handleClose}
+                  >
+                    <Alert
+                      onClose={handleClose}
+                      severity="success"
+                      sx={{ width: '100%' }}
+                    >
+                      No notifications!!
+                    </Alert>
+                  </Snackbar>
+                </div>
+              )}
+            </div>
           </div>
 
-          
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 {loggedInUser ? (
                   <Avatar alt="" src="" />
                 ) : (
-                  <RoomServiceIcon sx={{ color: "white" }} size="medium" />
+                  <RoomServiceIcon sx={{ color: 'white' }} size="medium" />
                 )}
               </IconButton>
             </Tooltip>
             <Menu
-              sx={{ mt: "45px" }}
+              sx={{ mt: '45px' }}
               id="menu-appbar"
               anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
+                vertical: 'top',
+                horizontal: 'right',
               }}
               keepMounted
               transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
+                vertical: 'top',
+                horizontal: 'right',
               }}
               anchorEl={anchorElUser}
               open={Boolean(anchorElUser)}
@@ -300,7 +312,6 @@ const handleNotificationClick =() => {
               ))}
             </Menu>
           </Box>
-         
         </Toolbar>
       </Container>
     </AppBar>
