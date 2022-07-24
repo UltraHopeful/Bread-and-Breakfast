@@ -3,7 +3,7 @@ import boto3
 from datetime import datetime
 from datetime import timedelta
 import time
-import uuid
+import base64
 from boto3.dynamodb.types import TypeDeserializer
 import urllib3
 
@@ -11,6 +11,31 @@ import urllib3
 ROOMS_INVENTORY_TABLE = 'group26_rooms_inventory'
 BOOKING_TABLE = 'group26_user_room_booking'
 http = urllib3.PoolManager()
+
+prices = {'1': 90, '2': 100, '3': 200, '4': 420, '5': 550}
+
+
+def get_days(checkin, checkout):
+    date1 = datetime.utcfromtimestamp(int(checkin))
+    date2 = datetime.utcfromtimestamp(int(checkout))
+    diff = date2-date1
+    days = diff.days
+    return days+1
+
+
+def calculate_price(event):
+    days = get_days(event["checkin"], event["checkout"])
+    room_price = prices.get(event['roomid'], 100)
+    return days*room_price
+
+
+def sqs_push(data):
+    client = boto3.client('sqs')
+
+    client.send_message(
+        QueueUrl="https://sqs.us-east-1.amazonaws.com/182962509948/group26_bigquery",
+        MessageBody=json.dumps(data)
+    )
 
 
 def validate_data(event, book=False):
@@ -136,17 +161,24 @@ def book_room(event):
         batch_write(ROOMS_INVENTORY_TABLE, python_array)
         booking_id = ''.join(
             str(datetime.now()).replace(" ", "-").split("."))
+        price = str(calculate_price(event))
         booking_doc = {'user_id': {'S': event['user']},
                        'booking_id':
-                       {'S': booking_id}, 'checkin': {'S': event['checkin']}, 'checkout': {'S': event['checkout']}, 'rooms': {'S': event['rooms']}, 'roomtype': {'S': event['roomid']}}
+                       {'S': booking_id}, 'checkin': {'S': event['checkin']}, 'checkout': {'S': event['checkout']}, 'rooms': {'S': event['rooms']}, 'roomtype': {'S': event['roomid']}, 'hotel_bill': {'S': price}, 'total_bill': {'S': price}}
         response = dynamodb_client.put_item(
             TableName=BOOKING_TABLE,
             Item=booking_doc
         )
 
-        res = http.request("POST", "https://pfqnboa6zi.execute-api.us-east-1.amazonaws.com/dev/api/notification",
-                           body=json.dumps({"message": "Successfully Booked Rooms with booking id: "+str(booking_id), "user": event['user']}))
+        sqs_data = {'user_id': event['user'],
+                    'booking_id': booking_id, 'type': 'hotel', 'checkin': event["checkin"], "checkout": event["checkout"], 'rooms': event['rooms'], "roomtype": event["roomid"], "hotel_bill": price}
+        sqs_push(sqs_data)
 
+        pubsub_data = {'message': "room booking", 'user_id': event['user'], 'booking_id': booking_id, 'type': 'hotel',
+                       'checkin': event["checkin"], "checkout": event["checkout"], 'rooms': event['rooms'], "roomtype": event["roomid"]}
+
+        res = http.request(
+            "POST", "https://pfqnboa6zi.execute-api.us-east-1.amazonaws.com/dev/api/pubsub", body=json.dumps(pubsub_data))
         return {
             'statusCode': 200,
             'body': f'Successfully Booked Rooms. booking id: {booking_id}!'}
@@ -187,12 +219,35 @@ def get_bookings(event):
         }
 
 
+def handle_meal_booking(body):
+    data = json.loads(base64.b64decode(body))
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('group26_user_room_booking')
+
+    table_key = {'user_id': data.get(
+        "user_id"), 'booking_id': data.get("booking_id")}
+    update_result = ""
+    booking = table.get_item(Key=table_key)
+    if "Item" in booking:
+        item = booking["Item"]
+        total = int(item.get('total_bill', 0))
+        total += int(data.get('meal_price'))
+        item['total_bill'] = str(total)
+        res1 = table.put_item(Item=item)
+    else:
+        update_result = "user not exist"
+
+
 def lambda_handler(event, context):
 
     if not "path" in event:
+        # handle kitchen order
+        if 'body' in event and 'isBase64Encoded' in event:
+            if event["isBase64Encoded"]:
+                handle_meal_booking(event["body"])
         return {
             'statusCode': 400,
-            'body': json.dumps("Path attribute is required")
+            'body': json.dumps("path attribute is required")
         }
 
     if event["path"] == "getrooms":
