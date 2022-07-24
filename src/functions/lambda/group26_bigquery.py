@@ -12,7 +12,7 @@ client = bigquery.Client()
 
 
 def get_str(time):
-    return datetime.utcfromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S')
+    return datetime.utcfromtimestamp(time).strftime('%Y-%m-%d')
 
 
 def lambda_handler(event, context):
