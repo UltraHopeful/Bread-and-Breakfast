@@ -1,0 +1,33 @@
+[
+	{
+		"name": "order_id",
+		"type": "STRING"
+	},
+	{
+		"name": "booking_id",
+		"type": "STRING"
+	},
+	{
+		"name": "meal_price",
+		"type": "STRING"
+	},
+	{
+		"name": "meals",
+		"type": "record",
+		"mode": "repeated",
+		"fields": [
+			{
+				"name": "meal_id",
+				"type": "STRING"
+			},
+			{
+				"name": "meal_value",
+				"type": "STRING"
+			}
+		]
+	},
+	{
+		"name": "user",
+		"type": "STRING"
+	}
+]
