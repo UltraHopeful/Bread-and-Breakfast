@@ -21,14 +21,16 @@ import CircularProgress from '@mui/material/CircularProgress';
 import AXIOS_CLIENT from '../../utils/api-client';
 
 import MuiAlert from '@mui/material/Alert';
+import { useAuth } from '../../context';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 const Kitchen = () => {
-  const user = 'manan';
+  const { loggedInUser } = useAuth();
 
+  const user = loggedInUser.sub;
   const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [bookingId, setBookingId] = useState('');
