@@ -33,7 +33,7 @@ const routes = ["hotel", "kitchen", "tour"];
 const loggedInRoutes = [
   { name: "Profile", route: "/profile" },
   { name: "Dashboard", route: "/dashboard" },
-  { name: "Feedback", route: "/feedback" },
+  { name: "Feedback", route: "/review" },
   { name: "Logout", route: "/" },
 ];
 

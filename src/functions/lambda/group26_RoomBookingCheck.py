@@ -101,16 +101,12 @@ def build_validation_result(isvalid, violated_slot, message_content):
 # util functions
 
 # room type check
-
-
 def room_type_check(room_type):
     room_types = ['single', 'twin', 'triple', 'quad', 'suite']
     print(room_type.lower() in room_types)
     return room_type.lower() in room_types
 
 # date format validation check
-
-
 def isDateValid(date):
     try:
         dateutil.parser.parse(date)
@@ -119,16 +115,12 @@ def isDateValid(date):
         return False
 
 # calculate the stay duration by check in and check out date.
-
-
 def stay_duration(check_in_date, check_out_date):
     check_in_datetime = dateutil.parser.parse(check_in_date).date()
     check_out_datetime = dateutil.parser.parse(check_out_date).date()
     return abs(check_in_datetime - check_out_datetime).days
 
 # getting the room type id from room tyep
-
-
 def room_type_id(room_type):
     room_types = [{'single': '1'}, {'twin': '2'}, {
         'triple': '3'}, {'quad': '4'}, {'suite': '5'}]
@@ -141,8 +133,6 @@ def room_type_id(room_type):
     return room_id
 
 # calculate the total amount of bill
-
-
 def generate_bill(check_in_date, check_out_date, room_type, no_of_rooms):
     room_types = [{'single': 90}, {'twin': 100}, {
         'triple': 200}, {'quad': 420}, {'suite': 550}]
@@ -159,8 +149,6 @@ def generate_bill(check_in_date, check_out_date, room_type, no_of_rooms):
     return total_amount
 
 # convert to specific time format to send it to booking api
-
-
 def epoch_time(date):
     # make epoch time
     try:
@@ -169,8 +157,6 @@ def epoch_time(date):
         return None
 
 # validates the slots of book room intent
-
-
 def validate_book_room(slots):
     check_in_date = slots.get("checkInDate", None)
     check_out_date = slots.get("checkOutDate", None)
@@ -232,7 +218,6 @@ def setUserCred(intent_request):
     # return delegate(session_attributes, intent_request['currentIntent']['slots'])
 
 # book room intent
-
 
 def book_room(intent_request):
     print(intent_request)
@@ -346,6 +331,7 @@ def book_room(intent_request):
             return delegate(session_attributes, intent_request['currentIntent']['slots'])
 
     else:
+        print("Not login")
         return close(
             session_attributes,
             'Failed',
@@ -376,8 +362,6 @@ def dispatch(intent_request):
 
 
 # --- Main handler ---
-
-
 def lambda_handler(event, context):
     """
     Route the incoming request based on intent.
