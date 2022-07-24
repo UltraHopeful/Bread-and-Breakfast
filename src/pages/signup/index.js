@@ -158,7 +158,6 @@ const Signup = () => {
                 <TextField
                   autoComplete="given-name"
                   name="fname"
-                  defaultValue="John"
                   required
                   fullWidth
                   id="fname"
@@ -171,7 +170,6 @@ const Signup = () => {
                 <TextField
                   autoComplete="family-name"
                   name="lname"
-                  defaultValue="Doe"
                   required
                   fullWidth
                   id="lname"
@@ -184,7 +182,6 @@ const Signup = () => {
                 <TextField
                   required
                   fullWidth
-                  defaultValue="jd@yopmail.com"
                   id="email"
                   label="Email Address"
                   name="email"
@@ -198,7 +195,6 @@ const Signup = () => {
                 <TextField
                   required
                   fullWidth
-                  defaultValue="12345678"
                   name="password"
                   label="Password"
                   type="password"
@@ -212,7 +208,6 @@ const Signup = () => {
                   required
                   fullWidth
                   name="cpassword"
-                  defaultValue="12345678"
                   label="Confirm Password"
                   type="password"
                   id="cpassword"
@@ -226,7 +221,6 @@ const Signup = () => {
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
-                  name="q1"
                   defaultValue="John"
                   required
                   fullWidth
@@ -238,7 +232,6 @@ const Signup = () => {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  name="q2"
                   defaultValue="Doe"
                   required
                   fullWidth
@@ -250,7 +243,6 @@ const Signup = () => {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  name="q3"
                   defaultValue="Doe"
                   required
                   fullWidth
@@ -267,7 +259,6 @@ const Signup = () => {
               <Grid item xs={12}>
                 <TextField
                   name="cipherKey"
-                  defaultValue="2"
                   required
                   fullWidth
                   id="cipherKey"
