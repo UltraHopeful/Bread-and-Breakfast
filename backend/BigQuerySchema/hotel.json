@@ -1,0 +1,30 @@
+[
+	{
+		"name": "user_id",
+		"type": "STRING"
+	},
+	{
+		"name": "booking_id",
+		"type": "STRING"
+	},
+	{
+		"name": "checkin",
+		"type": "STRING"
+	},
+	{
+		"name": "checkout",
+		"type": "STRING"
+	},
+	{
+		"name": "hotel_bill",
+		"type": "STRING"
+	},
+	{
+		"name": "rooms",
+		"type": "STRING"
+	},
+	{
+		"name": "roomtype",
+		"type": "STRING"
+	}
+]
