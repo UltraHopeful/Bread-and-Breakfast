@@ -26,7 +26,7 @@ def get_days(checkin, checkout):
 def calculate_price(event):
     days = get_days(event["checkin"], event["checkout"])
     room_price = prices.get(event['roomid'], 100)
-    return days*room_price
+    return days*room_price*int(event["rooms"])
 
 
 def sqs_push(data):
