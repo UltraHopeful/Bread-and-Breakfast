@@ -219,6 +219,7 @@ def setUserCred(intent_request):
 
 # book room intent
 
+
 def book_room(intent_request):
     print(intent_request)
     slots = intent_request['currentIntent']['slots']
@@ -362,6 +363,8 @@ def dispatch(intent_request):
 
 
 # --- Main handler ---
+
+
 def lambda_handler(event, context):
     """
     Route the incoming request based on intent.
